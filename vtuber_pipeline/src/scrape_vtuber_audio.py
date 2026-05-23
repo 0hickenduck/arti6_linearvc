@@ -35,7 +35,8 @@ def save_manifest(manifest: dict, manifest_path: str) -> None:
 
 def main():
     parser = argparse.ArgumentParser(description="VTuber Audio Scraper using yt-dlp")
-    parser.add_argument("urls", nargs="+", help="YouTube Channel or Video URLs")
+    parser.add_argument("urls", nargs="*", help="YouTube Channel or Video URLs")
+    parser.add_argument("--input-manifest", help="Path to a discovery manifest JSON to download from")
     parser.add_argument("--tags", nargs="*", default=[], help="Target tags (e.g. Speech, Singing, EN, JP)")
     parser.add_argument("--output-dir", default="data/raw_audio", help="Output directory for audio files")
     parser.add_argument("--manifest", help="Path to manifest JSON (default: <output-dir>/manifest.json)")
@@ -55,6 +56,48 @@ def main():
     os.makedirs(args.output_dir, exist_ok=True)
     manifest_path = args.manifest or os.path.join(args.output_dir, "manifest.json")
     manifest = load_manifest(manifest_path)
+    
+    download_targets = []
+    
+    if args.input_manifest:
+        try:
+            with open(args.input_manifest, 'r', encoding='utf-8') as f:
+                discovery_data = json.load(f)
+                if isinstance(discovery_data, dict):
+                    for vid, vdata in discovery_data.items():
+                        download_targets.append({
+                            'url': vdata.get('url', f"https://www.youtube.com/watch?v={vid}"),
+                            'tags': vdata.get('tags', args.tags),
+                            'domain': vdata.get('domain', "Unknown")
+                        })
+                elif isinstance(discovery_data, list):
+                    for vdata in discovery_data:
+                        download_targets.append({
+                            'url': vdata.get('url'),
+                            'tags': vdata.get('tags', args.tags),
+                            'domain': vdata.get('domain', "Unknown")
+                        })
+        except Exception as e:
+            logger.error(f"Failed to load input manifest: {e}")
+            sys.exit(1)
+            
+    for url in args.urls:
+        domain = "Unknown"
+        if "Speech" in args.tags:
+            domain = "Speech"
+        elif "Singing" in args.tags:
+            domain = "Singing"
+        elif args.tags:
+            domain = args.tags[0]
+        download_targets.append({
+            'url': url,
+            'tags': args.tags,
+            'domain': domain
+        })
+
+    if not download_targets:
+        logger.error("No URLs provided via CLI arguments or --input-manifest")
+        sys.exit(1)
 
     # Use uploader_id and video id for uniqueness and organization
     out_tmpl = os.path.join(args.output_dir, '%(uploader_id)s_%(id)s.%(ext)s')
@@ -83,12 +126,14 @@ def main():
     else:
         logger.warning(f"Cookie file {args.cookiefile} not found. Age-restricted or member-only videos may fail.")
 
-    logger.info(f"Starting download for {len(args.urls)} URL(s)")
-    logger.info(f"Tags to apply: {args.tags}")
+    logger.info(f"Starting download for {len(download_targets)} target(s)")
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        for url in args.urls:
-            logger.info(f"Processing URL: {url}")
+        for target in download_targets:
+            url = target['url']
+            domain = target['domain']
+            tags = target['tags']
+            logger.info(f"Processing URL: {url} (Domain: {domain})")
             try:
                 info = ydl.extract_info(url, download=True)
                 
@@ -109,14 +154,6 @@ def main():
                     # The out_tmpl generates {uploader_id}_{id}.{ext} and postprocessor forces m4a
                     filename = f"{uploader_id}_{video_id}.m4a"
                     
-                    domain = "Unknown"
-                    if "Speech" in args.tags:
-                        domain = "Speech"
-                    elif "Singing" in args.tags:
-                        domain = "Singing"
-                    elif args.tags:
-                        domain = args.tags[0]
-                        
                     manifest[video_id] = {
                         'video_id': video_id,
                         'channel_id': uploader_id,
@@ -124,7 +161,7 @@ def main():
                         'upload_date': entry.get('upload_date'),
                         'title': entry.get('title'),
                         'duration': entry.get('duration'),
-                        'tags': args.tags,
+                        'tags': tags,
                         'domain': domain,
                         'filename': filename,
                         'url': entry.get('webpage_url', f"https://www.youtube.com/watch?v={video_id}")
