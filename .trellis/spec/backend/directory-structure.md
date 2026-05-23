@@ -204,3 +204,89 @@ if args.test_index < args.train_count and not args.allow_train_test_overlap:
 
 Validation belongs near the CLI boundary so failed demo assumptions are visible
 before ARTI-6 model loading starts.
+
+### Scenario: VTuber Dataset Pipeline Scripts
+
+#### 1. Scope / Trigger
+
+Data collection and processing scripts live under `scripts/data_collection/`. Use this pattern for automated pipelines that scrape, separate, or segment audio from external sources (like YouTube).
+
+This spec applies to scripts such as:
+
+- `scripts/data_collection/scrape_vtuber_audio.py`
+- `scripts/data_collection/purify_audio.py`
+
+#### 2. Signatures
+
+Use explicit argparse CLIs with mandatory safety flags.
+
+```bash
+# Scraper signature
+python scripts/data_collection/scrape_vtuber_audio.py \
+  --urls "URL1" "URL2" \
+  --output-dir data/raw \
+  --sleep-requests 20 \
+  --domain "Speech"
+
+# Purifier signature
+python scripts/data_collection/purify_audio.py \
+  --manifest data/raw/manifest.json \
+  --output-dir data/purified
+```
+
+#### 3. Contracts
+
+**Manifest (JSON) fields:**
+- `video_id`: Unique identifier (e.g., YouTube ID).
+- `channel_id`: Source channel identifier.
+- `domain`: "Speech", "Singing", etc.
+- `filename`: Local path to the raw audio file.
+- `upload_date`: (Optional) YYYYMMDD.
+
+**Output Structure:**
+Processed chunks MUST be organized as:
+`{output_dir}/{channel_id}/{domain}/{video_id}_chunkXXX.wav`
+
+**Safety Mechanisms (Mandatory for Scrapers):**
+- `--sleep-requests`: Delay between metadata/page requests (minimum 15s recommended).
+- `--sleep-interval`: Delay between downloads (minimum 15s recommended).
+- No parallel downloads.
+
+#### 4. Validation & Error Matrix
+
+- Missing manifest file -> raise `FileNotFoundError`.
+- Missing required column in manifest (`video_id`, `channel_id`, `filename`) -> raise `ValueError` naming the column.
+- Demucs/Silero failure -> log `ERROR` and raise `RuntimeError` or continue based on pipeline flag.
+- Rate limit detected (HTTP 429) -> log `CRITICAL` and exit or wait.
+
+#### 5. Good/Base/Bad Cases
+
+- Good: Sequential download with pacing, manifest updated incrementally, output organized by domain.
+- Bad: Parallel scraping, hardcoded URLs in script, discarding source metadata.
+
+#### 6. Tests Required
+
+- `python -m py_compile scripts/data_collection/*.py`
+- `python scripts/data_collection/scrape_vtuber_audio.py --help`
+- `python scripts/data_collection/purify_audio.py --help`
+- Validate manifest schema after a dry-run or mock extraction.
+
+#### 7. Wrong vs Correct
+
+Wrong:
+
+```python
+# Downloading without pacing
+for url in urls:
+    download(url)
+```
+
+Correct:
+
+```python
+# Enforcing safety delays
+for url in urls:
+    download(url)
+    time.sleep(args.sleep_requests)
+```
+
