@@ -1,4 +1,7 @@
-# Add Gemini agent routing to harness
+# [UNFINISHED] Add Gemini agent routing to harness
+
+## Status Note
+This task is being archived as **UNFINISHED** per user request on 2026-05-23. The logic for Gemini agent routing has not been fully implemented in the harness.
 
 ## Goal
 

@@ -1,4 +1,7 @@
-# brainstorm: Visualize AI Users Presentation in HTML
+# [UNFINISHED] brainstorm: Visualize AI Users Presentation in HTML
+
+## Status Note
+This task is being archived as **UNFINISHED** per user request on 2026-05-23. The visualization for the AI Users Presentation was partially drafted but not fully verified/finalized.
 
 ## Goal
 
