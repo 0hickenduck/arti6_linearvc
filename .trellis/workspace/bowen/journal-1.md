@@ -235,3 +235,36 @@ Implemented a rate-limit-safe YouTube audio scraper and a Demucs+SileroVAD audio
 ### Next Steps
 
 - None - task complete
+
+
+## Session 8: Refactor Repository Structure
+
+**Date**: 2026-05-23
+**Task**: Refactor Repository Structure
+**Branch**: `master`
+
+### Summary
+
+Separated the legacy arti6_linearvc demo project and the new VTuber dataset pipeline into distinct root-level directories. Moved vtuber-related scripts and test files to the vtuber_pipeline folder and updated backend specs.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `44e9fa4` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
