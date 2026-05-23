@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Quality-check entry point for backend/script changes."}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Validate CLI/report/output conventions and required checks."}
+{"file": ".trellis/spec/guides/index.md", "reason": "Shared checklist for reuse and cross-layer consistency."}
+{"file": ".trellis/tasks/05-23-gemini-vtuber-audio-extraction-workplan/prd.md", "reason": "Acceptance criteria and task constraints for review."}
+{"file": ".trellis/tasks/05-23-gemini-vtuber-audio-extraction-workplan/gemini_task_breakdown.md", "reason": "Verify implementation follows the intended Gemini task sequence."}

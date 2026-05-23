@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend/script guidance index for data-collection CLI work."}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Existing report/output conventions and validation expectations for research scripts."}
+{"file": ".trellis/spec/guides/index.md", "reason": "Shared thinking checklist for code reuse and cross-layer data flow."}
+{"file": ".trellis/tasks/05-23-gemini-vtuber-audio-extraction-workplan/prd.md", "reason": "Task goals, requirements, acceptance criteria, and known gaps."}
+{"file": ".trellis/tasks/05-23-gemini-vtuber-audio-extraction-workplan/gemini_task_breakdown.md", "reason": "Ordered Gemini CLI handoff tasks and implementation prompts."}
