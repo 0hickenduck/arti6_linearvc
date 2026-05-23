@@ -209,12 +209,12 @@ before ARTI-6 model loading starts.
 
 #### 1. Scope / Trigger
 
-Data collection and processing scripts live under `scripts/data_collection/`. Use this pattern for automated pipelines that scrape, separate, or segment audio from external sources (like YouTube).
+Data collection and processing scripts live under `vtuber_pipeline/src/`. Use this pattern for automated pipelines that scrape, separate, or segment audio from external sources (like YouTube).
 
 This spec applies to scripts such as:
 
-- `scripts/data_collection/scrape_vtuber_audio.py`
-- `scripts/data_collection/purify_audio.py`
+- `vtuber_pipeline/src/scrape_vtuber_audio.py`
+- `vtuber_pipeline/src/purify_audio.py`
 
 #### 2. Signatures
 
@@ -222,7 +222,7 @@ Use explicit argparse CLIs with mandatory safety flags.
 
 ```bash
 # Scraper signature
-python scripts/data_collection/scrape_vtuber_audio.py \
+python vtuber_pipeline/src/scrape_vtuber_audio.py \
   --urls "URL1" "URL2" \
   --output-dir data/raw \
   --sleep-requests 20 \
@@ -266,9 +266,9 @@ Processed chunks MUST be organized as:
 
 #### 6. Tests Required
 
-- `python -m py_compile scripts/data_collection/*.py`
-- `python scripts/data_collection/scrape_vtuber_audio.py --help`
-- `python scripts/data_collection/purify_audio.py --help`
+- `python -m py_compile vtuber_pipeline/src/*.py`
+- `python vtuber_pipeline/src/scrape_vtuber_audio.py --help`
+- `python vtuber_pipeline/src/purify_audio.py --help`
 - Validate manifest schema after a dry-run or mock extraction.
 
 #### 7. Wrong vs Correct
@@ -288,5 +288,8 @@ Correct:
 for url in urls:
     download(url)
     time.sleep(args.sleep_requests)
+```
+
+s)
 ```
 
