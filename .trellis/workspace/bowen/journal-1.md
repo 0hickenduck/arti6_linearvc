@@ -69,3 +69,37 @@ Created a comprehensive conceptual report explaining the ARTI-6 articulation mod
 ### Next Steps
 
 - None - task complete
+
+
+## Session 3: Environment Setup: Antigravity CLI and Git
+
+**Date**: 2026-05-23
+**Task**: Environment Setup: Antigravity CLI and Git
+**Branch**: `master`
+
+### Summary
+
+Installed Antigravity CLI (agy) and successfully configured the Git repository by performing an initial commit with local user info.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0383364` | (see git log) |
+| `fb82a36` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
