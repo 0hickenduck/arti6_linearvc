@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频信号处理：从魔法到数学</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/night.min.css" id="theme">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+        .analogy-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 5px solid #ff79c6;
+            padding: 15px;
+            font-size: 0.75em;
+            margin-top: 20px;
+            text-align: left;
+            line-height: 1.4;
+        }
+        .socratic-box {
+            background-color: rgba(80, 250, 123, 0.1);
+            border-left: 5px solid #50fa7b;
+            padding: 15px;
+            font-size: 0.75em;
+            margin-top: 20px;
+            text-align: left;
+            color: #50fa7b;
+            line-height: 1.4;
+        }
+        .highlight { color: #8be9fd; }
+        .text-left { text-align: left; }
+        .math-small { font-size: 0.8em; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1 -->
+            <section>
+                <h2 class="highlight">音频信号处理特论</h2>
+                <h3>化混乱为清晰的数学魔法</h3>
+                <p>如何让电脑在嘈杂的派对中，单独听清你的声音？</p>
+            </section>
+
+            <!-- Slide 2: BSS -->
+            <section>
+                <h3>核心挑战：盲源分离 (BSS)</h3>
+                <p class="text-left" style="font-size: 0.8em;">想象你在一个鸡尾酒会（Cocktail Party），很多人在同时说话，房间里有几个麦克风把所有声音都录了下来。</p>
+                <ul class="text-left" style="font-size: 0.8em;">
+                    <li><strong>目标：</strong> 从混合的录音中，把每个人的声音单独剥离出来。</li>
+                    <li><strong>“盲 (Blind)”：</strong> 我们不知道说话的人在哪里，也不知道声音是怎么在房间里反射的。</li>
+                </ul>
+
+                <div class="analogy-box">
+                    <strong>💡 类比：颜料混合</strong><br>
+                    这就像有人把红、黄、蓝三种颜料泼在了一起变成了黑色（混合音频）。你的任务是只看着这盆黑水，把它们重新还原成纯粹的红色、黄色和蓝色。<br>
+                    <strong>听起来不可能？数学可以做到！</strong>
+                </div>
+            </section>
+
+            <!-- Slide 3: ICA -> IVA -> ILRMA -->
+            <section>
+                <section>
+                    <h3>分离声音的三代神器</h3>
+                    <p class="text-left" style="font-size: 0.8em;">报告的第一题，探讨了三种算法的进化史：</p>
+                    <ol class="text-left" style="font-size: 0.8em;">
+                        <li><span class="highlight">ICA (独立成分分析)</span> - 第一代</li>
+                        <li><span class="highlight">IVA (独立向量分析)</span> - 第二代</li>
+                        <li><span class="highlight">ILRMA (独立低秩矩阵分析)</span> - 第三代</li>
+                    </ol>
+                    <p style="font-size: 0.6em; color: gray; margin-top:20px;">⬇️ 按下键盘的“下箭头”查看它们的进化过程</p>
+                </section>
+
+                <section>
+                    <h4>1. ICA (独立成分分析)</h4>
+                    <p class="text-left" style="font-size: 0.8em;"><strong>假设：</strong> 只要分出来的声音互相之间“没有关系（统计独立）”，那它们就是纯粹的单人声音。</p>
+                    <div class="analogy-box">
+                        <strong>⚠️ 致命 Bug：排列错乱 (Permutation)</strong><br>
+                        因为声音是由很多频率（高音、低音）组成的，ICA 把音频切成一片片频率来算。结果算完之后：<br>
+                        高音频段把“张三”认成了音轨A，低音频段却把“李四”认成了音轨A。<br>
+                        就像你把红黄蓝分离了，但红色颜料桶里装的却是红色的盖子和黄色的底座。
+                    </div>
+                </section>
+
+                <section>
+                    <h4>2. IVA (独立向量分析)</h4>
+                    <p class="text-left" style="font-size: 0.8em;"><strong>进化：</strong> 为了解决 ICA 的拼图错乱 Bug。</p>
+                    <div class="analogy-box">
+                        <strong>💡 绝妙思路：捆绑销售</strong><br>
+                        IVA 提出：同一个人的声音，高音和低音通常是<strong>同时发声</strong>的（共起性）。所以它把一个人的所有频率捆绑成一个“向量”。这样在分离的时候，张三的高低音就会一起被分出来，彻底解决了拼图错乱的问题！
+                    </div>
+                </section>
+
+                <section>
+                    <h4>3. ILRMA (独立低秩矩阵分析)</h4>
+                    <p class="text-left" style="font-size: 0.8em;"><strong>终极形态：</strong> 引入 NMF（非负矩阵分解）。</p>
+                    <div class="analogy-box">
+                        <strong>💡 绝妙思路：乐谱与按键</strong><br>
+                        IVA 只知道高低音同时响，但缺乏“乐理知识”。ILRMA 假设人类的语音其实就像弹钢琴：它是由几个固定的“基本音色（基底）”按照一定的“节奏（激活）”组合而成的（这就是低秩性）。<br>
+                        加上这个“物理常识”后，分离精度极高！
+                    </div>
+                </section>
+            </section>
+
+            <!-- Slide 4: 最优化算法 MM -->
+            <section>
+                <section>
+                    <h3>第二部分：AI 是怎么计算的？</h3>
+                    <p class="text-left" style="font-size: 0.8em;">上面说的模型很完美，但电脑怎么找到最优解？</p>
+                    <ul class="text-left" style="font-size: 0.8em;">
+                        <li>传统深度学习：用<strong>梯度下降法（最速下降法）</strong>。</li>
+                        <li>音频处理爱用：<strong>辅助函数法 (MM 算法)</strong>。</li>
+                    </ul>
+                    <div class="socratic-box">
+                        <strong>🤔 思考引问:</strong><br>
+                        在用 PyTorch 训练模型时，你是不是经常为“Learning Rate（学习率）”设多少而头疼？设大了模型爆炸（Loss变 NaN），设小了跑三天三夜。<br>
+                        如果有一种算法，<strong>永远不需要调学习率，而且保证每次更新 Loss 绝对只会下降不会上升</strong>，你想不想用？
+                    </div>
+                    <p style="font-size: 0.6em; color: gray; margin-top:20px;">⬇️ 按下键盘的“下箭头”查看 MM 算法原理</p>
+                </section>
+
+                <section>
+                    <h4>辅助函数法 (MM 算法)</h4>
+                    <div class="text-left math-small">
+                        <p><strong>怎么做到的？</strong></p>
+                        <p>假设你想爬到山谷底（求 Loss 的最小值 $J(\theta)$），但山谷的形状太复杂，直接走容易跨错步子掉下悬崖。</p>
+                        <p>MM 算法的做法是：在你当前站着的地方，套一个形状简单、底部朝上的“碗（辅助函数 $J^+$）”。</p>
+                        <ol>
+                            <li>因为这个碗的底部很容易算（有解析解），你直接走到碗底。</li>
+                            <li>到了新位置，再套一个新的碗，走到新碗底。</li>
+                        </ol>
+                        <p>因为碗总是“托着”原本的山谷，所以你每走一步，海拔绝对只会下降，<strong>100% 保证收敛，无需任何学习率！</strong></p>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Slide 5: The Math (NMF) -->
+            <section>
+                <h3>让数学变直观：NMF 公式推导</h3>
+                <p class="text-left math-small">报告的最后一部分是一堆复杂的公式：</p>
+                <div class="text-left math-small" style="background: rgba(0,0,0,0.5); padding:10px;">
+                    $ J(H, U) = \frac{1}{2} \|Y - HU\|_F^2 $
+                </div>
+                <p class="text-left math-small" style="margin-top:20px;"><strong>其实它只在干一件事：</strong></p>
+                <div class="analogy-box">
+                    <strong>💡 类比：</strong><br>
+                    $Y$ 是电脑听到的混合音频（黑水）。<br>
+                    $H$ 是“调色板”上的基础颜色（红黄蓝）。<br>
+                    $U$ 是“配方说明书”（红色加两滴，黄色加一滴）。<br><br>
+                    那一大堆推导（比如引入 $\lambda$、用イェンセンの不等式），就是在用刚刚说的“套碗法（MM算法）”，一步步教电脑怎么自动找到最完美的调色板 $H$ 和配方 $U$。
+                </div>
+            </section>
+
+            <!-- Slide 6: Your Turn -->
+            <section>
+                <h3>从这里开始你的学习</h3>
+                <p class="text-left" style="font-size: 0.8em;">刚才我为你梳理了整篇硬核报告的骨架。现在，我就是你的苏格拉底老师。</p>
+                <div class="socratic-box">
+                    <strong>🤔 苏格拉底提问 (第一关):</strong><br>
+                    听了刚才的“鸡尾酒会”和“颜料混合”的比喻，你觉得在现实生活中（比如手机麦克风录音），为什么把红黄蓝分离出来会变得<strong>异常困难</strong>？<br>
+                    （提示：想想声音在房间里传播时，会撞到墙壁发生什么？）<br><br>
+                    👉 <em>请在聊天窗口里回答我，不用怕答错！</em>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Reveal.js Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: true,
+            transition: 'slide' // none/fade/slide/convex/concave/zoom
+        });
+    </script>
+</body>
+</html>

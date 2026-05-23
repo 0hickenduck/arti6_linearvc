@@ -1,0 +1,8 @@
+[delegate_to_gemini] cwd=/home/bowen/bowen_lab/projects/arti6_linearvc
+[delegate_to_gemini] model=gemini-3-flash-preview approval_mode=plan timeout=180s
+Warning: Basic terminal detected (TERM=dumb). Visual rendering will be limited. For the best experience, use a terminal emulator with truecolor support.
+Warning: 256-color support not detected. Using a terminal with at least 256-color support is recommended for a better visual experience.
+Ripgrep is not available. Falling back to GrepTool.
+Trellis SessionStart 已注入：workflow、当前任务状态、开发者身份、git 状态、active tasks、spec 索引已加载。
+
+I am the Gemini model invoked for this task. I have confirmed that I can read the active task PRD title, which is: **"Add Gemini agent routing to harness"**.

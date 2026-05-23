@@ -1,0 +1,5 @@
+{"_example": "Fill with {\"file\": \"<path>\", \"reason\": \"<why>\"}. Put spec/research files only — no code paths. Run `python3 .trellis/scripts/get_context.py --mode packages` to list available specs. Delete this line once real entries are added."}
+{"file": ".trellis/spec/agent-collaboration.md", "reason": "Defines shared-frontends vs backend-specific behavior for Codex/Gemini integration."}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "Relevant when introducing shared routing abstractions instead of duplicating backend branches."}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "Relevant because generated templates and runtime scripts must stay aligned across layers."}
+{"file": ".trellis/tasks/05-19-add-gemini-agent-routing-to-harness/research/gemini-agent-model-routing.md", "reason": "Research basis for Gemini model routing and natural-language delegation behavior."}

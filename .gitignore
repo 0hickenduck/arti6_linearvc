@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+
+# Node
+node_modules/
+.npm/
+
+# Data / model / cache / outputs
+data/
+models/
+cache/
+outputs/
+logs/*.tmp
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.tar
+*.tar.gz
+*.zip
+
+# ML experiment caches
+.huggingface/
+hf_cache/
+wandb/
+mlruns/
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,206 @@
+# Directory Structure
+
+> How backend code is organized in this project.
+
+---
+
+## Overview
+
+<!--
+Document your project's backend directory structure here.
+
+Questions to answer:
+- How are modules/packages organized?
+- Where does business logic live?
+- Where are API endpoints defined?
+- How are utilities and helpers organized?
+-->
+
+(To be filled by the team)
+
+---
+
+## Directory Layout
+
+```
+<!-- Replace with your actual structure -->
+src/
+├── ...
+└── ...
+```
+
+---
+
+## Module Organization
+
+<!-- How should new features/modules be organized? -->
+
+(To be filled by the team)
+
+---
+
+## Naming Conventions
+
+<!-- File and folder naming rules -->
+
+(To be filled by the team)
+
+---
+
+## Examples
+
+<!-- Link to well-organized modules as examples -->
+
+### Scenario: ARTI-6 Research Demo Scripts
+
+#### 1. Scope / Trigger
+
+Research demos live under `arti6_linearvc_demo/` and are executable Python CLI
+scripts. Add a new script there when the work reuses the local ARTI-6 checkout,
+paired manifests, and `outputs/` report pattern.
+
+This spec applies to scripts such as:
+
+- `arti6_linearvc_demo/prepare_gtsinger_tiny.py`
+- `arti6_linearvc_demo/run_arti6_smoke.py`
+- `arti6_linearvc_demo/run_linearvc_floor.py`
+- `arti6_linearvc_demo/run_timbre_shift_mapper.py`
+- `arti6_linearvc_demo/run_speaker_domain_eval.py`
+- `arti6_linearvc_demo/run_seedvc_svc_demo.py`
+- `arti6_linearvc_demo/run_seedvc_svc_matrix.py`
+- `arti6_linearvc_demo/build_subjective_eval.py`
+
+#### 2. Signatures
+
+Use explicit argparse CLIs. A timbre-shift mapper run has this command shape:
+
+```bash
+.venv/bin/python arti6_linearvc_demo/run_timbre_shift_mapper.py \
+  --manifest data/manifests/cmu_arctic_6pairs.csv \
+  --output-dir outputs/timbre_shift_mapper/tiny_5train_1test \
+  --train-count 5 \
+  --test-index 5 \
+  --epochs 400
+```
+
+#### 3. Contracts
+
+Manifest rows must include:
+
+- `utterance_id`: stable paired utterance identifier.
+- `source_wav`: source-side wav path.
+- `target_wav`: target-side wav path.
+
+Optional manifest fields should be preserved in summaries when useful:
+
+- `speaker_id`
+- `source_domain`
+- `target_domain`
+- `source_speaker`
+- `target_speaker`
+
+Output directories should contain:
+
+- `summary.json`: machine-readable run metadata, metrics, and artifact paths.
+- `index.html`: local inspection report when the demo produces listening or plot artifacts.
+- `audio/`: generated wav conditions.
+- `arrays/`: saved numpy arrays and small model state files.
+- `plots/`: diagnostic figures.
+- `<output-dir-name>_report.zip`: optional portable bundle for downloading server-side demos locally.
+- `subjective_eval.html` and `subjective_eval_key.json`: optional blind listening-test page and condition key when subjective evaluation is part of the run.
+
+Timbre-shift mapper runs may also include optional Route A slider-sweep wav files
+when `--synthesize-sweep-audio` is passed. These belong in `audio/` beside the
+main comparison conditions and should be referenced by `summary.json` and
+`index.html`.
+
+Speaker-domain objective evaluation outputs use the same report convention but
+do not write audio. They should contain:
+
+- `selection_manifest.csv`: exact GTSinger speech/singing rows used for enrollment and query.
+- `summary.json`: protocol metrics, extractor metadata, and artifact paths.
+- `index.html`: compact metrics report for local viewing.
+- `arrays/embeddings.npz`: extracted embedding matrix plus speaker/domain/split labels.
+- `plots/speaker_domain_protocols.png`: identification and EER comparison.
+- `<output-dir-name>_report.zip`: optional portable bundle for downloading server-side metrics locally.
+
+Seed-VC pivot demos use the same report convention for singing-aware conversion.
+They should contain:
+
+- `selection_manifest.csv`: exact GTSinger source and target rows.
+- `summary.json`: selected rows, Seed-VC parameters, conversion logs, audio
+  paths, audio metadata, and speaker-similarity scores.
+- `index.html`: compact listening report.
+- `audio/`: source singing, speech/singing references, and converted singing outputs.
+- `logs/`: Seed-VC stdout/stderr per conversion condition.
+- `seedvc_raw/`: raw Seed-VC output wavs before renaming.
+- `subjective_eval.html` and `subjective_eval_key.json`: optional blind listening page.
+- `<output-dir-name>_report.zip`: portable bundle for local listening.
+
+Seed-VC matrix demos aggregate several Seed-VC pair runs into one listening
+bundle. They should contain:
+
+- `matrix_summary.json`: aggregate parameters, per-pair rows, run summary paths,
+  and aggregate speaker-similarity stats.
+- `matrix_metrics.csv`: compact per-pair metrics for spreadsheet comparison.
+- `index.html`: aggregate HTML report linking each pair report and blind eval.
+- `runs/<pair-id>/`: one normal Seed-VC pair output directory per pair.
+- `logs/`: stdout/stderr logs for each pair run and subjective-eval build.
+- `<output-dir-name>_report.zip`: portable aggregate bundle containing the
+  matrix files and every pair run artifact.
+
+#### 4. Validation & Error Matrix
+
+- Missing CSV header -> raise `ValueError`.
+- Missing required manifest column -> raise `ValueError` naming the column.
+- `train-count < 1` -> raise `ValueError`.
+- `train-count` greater than row count -> raise `ValueError`.
+- `test-index` outside manifest -> raise `ValueError`.
+- Test row inside the training slice -> raise `ValueError` unless the script exposes an explicit smoke-test override.
+- Zero-norm embedding -> raise `ValueError` before synthesis.
+
+#### 5. Good/Base/Bad Cases
+
+- Good: held-out run where `test-index >= train-count`, summary records no train/test overlap, and all audio/plot paths exist.
+- Base: overlap run allowed only for bookkeeping smoke tests via an explicit flag.
+- Bad: silently training and evaluating on the same row in a claimed held-out result.
+
+#### 6. Tests Required
+
+At minimum:
+
+- `python -m compileall -q arti6_linearvc_demo`
+- `run_timbre_shift_mapper.py --help` for CLI parse visibility.
+- `run_speaker_domain_eval.py --help` when the speaker-domain objective script changes.
+- `run_seedvc_svc_demo.py --help` when the Seed-VC pivot script changes.
+- `run_seedvc_svc_matrix.py --help` when the Seed-VC matrix script changes.
+- A summary validation that loads `summary.json`, checks referenced audio and plot files exist, and asserts the feasibility flags expected by the run.
+- For Seed-VC matrix runs, load `matrix_summary.json`, check that each `rows[*]`
+  report path exists, and check that `matrix_metrics.csv` contains one row per
+  requested pair.
+- If `--bundle-zip` is used, inspect the zip listing and confirm it contains `index.html`, `summary.json` or `matrix_summary.json`, plots, arrays, and any audio/model-state files that the specific run is expected to emit.
+
+For model-heavy scripts, a full ARTI-6 run is the integration test. Record the exact
+command and result path in the active task's `research/` directory.
+
+#### 7. Wrong vs Correct
+
+Wrong:
+
+```python
+rows = list(csv.DictReader(open(args.manifest)))
+test_pair = rows[args.test_index]
+```
+
+This accepts malformed manifests and can silently use an overlapping train/test row.
+
+Correct:
+
+```python
+rows = read_manifest(args.manifest)
+if args.test_index < args.train_count and not args.allow_train_test_overlap:
+    raise ValueError("test-index is inside the training slice")
+```
+
+Validation belongs near the CLI boundary so failed demo assumptions are visible
+before ARTI-6 model loading starts.

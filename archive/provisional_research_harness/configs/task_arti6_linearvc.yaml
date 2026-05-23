@@ -1,0 +1,374 @@
+project:
+  id: arti6_linearvc
+  name: "ARTI-6 + LinearVC"
+  description: "Interpretable articulatory voice conversion using explicit transformations of six-dimensional articulatory trajectories."
+  status: PARTIAL_GO
+  phase: task_spec_created
+  lab_server_available: false
+  do_not_run_arti6: true
+  large_downloads_allowed: false
+  models_or_datasets_downloaded: false
+
+research_question: "Can speaker-dependent voice characteristics be represented as explicit transformations of low-dimensional articulatory trajectories?"
+
+arti6_dimensions:
+  - id: LA
+    name: Lip Aperture
+  - id: TT
+    name: Tongue Tip
+  - id: TB
+    name: Tongue Body
+  - id: VL
+    name: Velum
+  - id: TR
+    name: Tongue Root
+  - id: LX
+    name: Larynx
+
+first_practical_demo:
+  question: "Can we run ARTI-6 inversion and synthesis, then perform a simple source-to-target linear transformation on the 6D articulatory features, and synthesize converted speech?"
+  must_not_do_yet:
+    - "Do not download model checkpoints."
+    - "Do not download datasets."
+    - "Do not run ARTI-6."
+    - "Do not assume CUDA, GPU, checkpoint paths, dataset paths, or lab paths."
+
+eventual_pipeline:
+  step_1_inversion:
+    source: "source.wav -> source_arti_feats: (T, 6), source_spk_emb"
+    target: "target.wav -> target_arti_feats: (T, 6), target_spk_emb"
+  step_2_reconstruction:
+    source: "source_arti_feats + source_spk_emb -> source_reconstruction.wav"
+    target: "target_arti_feats + target_spk_emb -> target_reconstruction.wav"
+  step_3_embedding_only_vc_baseline:
+    output: "source_arti_feats + target_spk_emb -> vc_embedding_only.wav"
+  step_4_articulatory_linear_transform:
+    transform: "transformed_source_arti = W source_arti + b"
+    outputs:
+      - "transformed_source_arti + source_spk_emb -> vc_arti_transform_only.wav"
+      - "transformed_source_arti + target_spk_emb -> vc_arti_transform_plus_target_spk.wav"
+  key_comparison:
+    baseline: "source_arti_feats + target_spk_emb"
+    proposed: "transformed_source_arti + target_spk_emb"
+    purpose: "Test whether articulatory transformation contributes beyond the target speaker embedding."
+
+required_later_artifacts:
+  audio:
+    - "01_source_original.wav"
+    - "02_target_reference.wav"
+    - "03_source_reconstruction.wav"
+    - "04_target_reconstruction.wav"
+    - "05_embedding_only_vc.wav"
+    - "06_meanstd_transform_only_source_spk.wav"
+    - "07_meanstd_transform_plus_target_spk.wav"
+    - "08_diag_affine_transform_plus_target_spk.wav"
+    - "09_full_affine_transform_plus_target_spk.wav"
+  arrays:
+    - "source_arti.npy"
+    - "target_arti.npy"
+    - "transformed_arti.npy"
+    - "source_spk_emb.npy"
+    - "target_spk_emb.npy"
+  diagnostics:
+    - "plot source ARTI-6 trajectories"
+    - "plot transformed ARTI-6 trajectories"
+    - "plot target ARTI-6 trajectories"
+    - "plot per-dimension mean/std before and after transform"
+    - "plot full affine W heatmap"
+    - "print shape and range of every tensor"
+
+gates:
+  - id: gate_0
+    name: "Machine/context check"
+    goal: "Record local machine context without assuming lab server, GPU, CUDA, data, or checkpoints."
+    preconditions:
+      - "Workspace exists locally."
+      - "No large downloads have been approved."
+    commands:
+      - "pwd"
+      - "git status"
+      - "python3 --version"
+      - "python3 research_harness/scripts/check_machine.py"
+    expected_artifacts:
+      - "Updated PROJECT_STATE.json"
+      - "Machine/context output copied into notes or logs"
+    success_criteria:
+      - "Command outputs are recorded exactly."
+      - "GPU/CUDA/checkpoint/dataset availability remains UNKNOWN unless verified."
+    failure_diagnosis_instructions:
+      - "Include exact stderr/stdout."
+      - "Likely cause: missing local harness script or Python executable mismatch."
+      - "Next diagnostic command: find research_harness -maxdepth 4 -type f | sort"
+      - "Minimal fix: restore or create only the missing harness utility after approval; do not install GPU packages."
+    status: PARTIAL_GO
+
+  - id: gate_1
+    name: "ARTI-6 repository audit"
+    goal: "Identify the actual ARTI-6 repository structure, APIs, checkpoints, dependencies, and supported inference paths."
+    preconditions:
+      - "ARTI-6 source location is known or clone approval is given."
+      - "No model or dataset downloads."
+    commands:
+      - "find <arti6_repo> -maxdepth 3 -type f | sort | sed -n '1,200p'"
+      - "sed -n '1,240p' <arti6_repo>/README*"
+      - "rg -n \"checkpoint|inference|synthesis|invert|speaker|embedding|wav|sample\" <arti6_repo>"
+    expected_artifacts:
+      - "research_notes/01_arti6_repo_audit.md"
+      - "List of verified entrypoints and unknowns"
+    success_criteria:
+      - "Inversion and synthesis APIs are identified from source or README."
+      - "Checkpoint requirements are identified without downloading checkpoints."
+    failure_diagnosis_instructions:
+      - "Exact error: repository missing, README missing, or API not found."
+      - "Likely cause: wrong repo path or undocumented API."
+      - "Next diagnostic command: find . -maxdepth 4 -iname '*arti*' -o -iname '*README*'"
+      - "Minimal fix: ask for correct ARTI-6 repo path or clone permission."
+    status: PENDING
+
+  - id: gate_2
+    name: "Environment setup plan"
+    goal: "Design a reproducible environment plan without installing heavyweight GPU packages."
+    preconditions:
+      - "Gate 1 identifies dependencies."
+      - "Local Python/conda/venv availability is known."
+    commands:
+      - "python3 --version"
+      - "which python3"
+      - "conda --version"
+      - "python3 -m venv --help"
+    expected_artifacts:
+      - "research_notes/02_environment_plan.md"
+      - "Proposed conda or venv commands, not executed unless approved"
+    success_criteria:
+      - "CPU-only or deferred-GPU setup path is explicit."
+      - "No CUDA/PyTorch version is assumed."
+    failure_diagnosis_instructions:
+      - "Exact error: missing conda, venv unavailable, dependency ambiguity."
+      - "Likely cause: local machine lacks environment manager."
+      - "Next diagnostic command: command -v conda python3 pip3"
+      - "Minimal fix: use venv or ask user for preferred environment manager."
+    status: PENDING
+
+  - id: gate_3
+    name: "Dependency/import check"
+    goal: "Verify imports and lightweight package availability before any ARTI-6 execution."
+    preconditions:
+      - "Environment setup plan approved."
+      - "No model or dataset downloads required."
+    commands:
+      - "python3 - <<'PY'\nimport sys\nprint(sys.version)\nPY"
+      - "python3 -m pip list"
+      - "python3 - <<'PY'\n# import checks to be filled after repo audit\nPY"
+    expected_artifacts:
+      - "logs/import_check.txt"
+      - "Updated dependency unknowns"
+    success_criteria:
+      - "Required imports either succeed or fail with exact missing package names."
+      - "No heavyweight install occurs in this gate."
+    failure_diagnosis_instructions:
+      - "Exact error: ModuleNotFoundError, version mismatch, import side effect."
+      - "Likely cause: missing dependency or incompatible Python version."
+      - "Next diagnostic command: python3 -m pip show <package>"
+      - "Minimal fix: add package to environment plan; do not install until approved."
+    status: PENDING
+
+  - id: gate_4
+    name: "One-wav ARTI-6 inversion+synthesis smoke test"
+    goal: "Run a single verified input through ARTI-6 inversion and synthesis."
+    preconditions:
+      - "ARTI-6 API verified."
+      - "Checkpoint availability verified by execution or approved download."
+      - "One small wav input path verified."
+    commands:
+      - "python3 <arti6_infer_script> --input <source.wav> --output outputs/smoke"
+    expected_artifacts:
+      - "outputs/smoke/source_arti.npy"
+      - "outputs/smoke/source_spk_emb.npy"
+      - "outputs/smoke/source_reconstruction.wav"
+    success_criteria:
+      - "Feature shape is (T, 6)."
+      - "Speaker embedding shape is printed."
+      - "Reconstruction wav is written and playable."
+    failure_diagnosis_instructions:
+      - "Exact error: checkpoint missing, API mismatch, audio decode failure, CUDA error."
+      - "Likely cause: wrong API assumptions or unavailable checkpoint."
+      - "Next diagnostic command: inspect script --help or source entrypoint."
+      - "Minimal fix: adjust command to verified API; do not bypass checkpoint policy."
+    status: PENDING
+
+  - id: gate_5
+    name: "Tiny CMU ARCTIC manifest"
+    goal: "Create a tiny paired source/target manifest for initial LinearVC fitting."
+    preconditions:
+      - "CMU ARCTIC location is verified or download is approved."
+      - "Source speaker bdl and target speaker slt are verified."
+    commands:
+      - "find <cmu_arctic_root> -type f -name '*.wav' | sort | sed -n '1,40p'"
+      - "python3 <manifest_script> --source bdl --target slt --train 5 --test 1"
+    expected_artifacts:
+      - "data/manifests/arti6_linearvc_tiny_train.csv"
+      - "data/manifests/arti6_linearvc_tiny_test.csv"
+    success_criteria:
+      - "5 to 20 paired training utterances listed."
+      - "1 to 3 paired test utterances listed."
+      - "Paths exist locally."
+    failure_diagnosis_instructions:
+      - "Exact error: path missing, speaker missing, prompt IDs do not match."
+      - "Likely cause: CMU ARCTIC layout differs from assumptions."
+      - "Next diagnostic command: find <cmu_arctic_root> -maxdepth 3 -type d | sort"
+      - "Minimal fix: update manifest parser for verified layout."
+    status: PENDING
+
+  - id: gate_6
+    name: "ARTI-6 feature extraction"
+    goal: "Extract source and target ARTI-6 features plus speaker embeddings for manifest utterances."
+    preconditions:
+      - "Gate 4 smoke test passes."
+      - "Gate 5 manifest paths verified."
+    commands:
+      - "python3 <extract_script> --manifest data/manifests/arti6_linearvc_tiny_train.csv --output outputs/features/train"
+      - "python3 <extract_script> --manifest data/manifests/arti6_linearvc_tiny_test.csv --output outputs/features/test"
+    expected_artifacts:
+      - "source_arti.npy"
+      - "target_arti.npy"
+      - "source_spk_emb.npy"
+      - "target_spk_emb.npy"
+      - "feature_shapes.json"
+    success_criteria:
+      - "Every ARTI tensor has last dimension 6."
+      - "Shape and range of every tensor is printed."
+    failure_diagnosis_instructions:
+      - "Exact error: extraction failure, inconsistent sample rate, unexpected tensor rank."
+      - "Likely cause: audio preprocessing mismatch or API mismatch."
+      - "Next diagnostic command: inspect saved npy shapes with numpy."
+      - "Minimal fix: normalize sample rate/preprocessing according to verified ARTI-6 docs."
+    status: PENDING
+
+  - id: gate_7
+    name: "Linear transform fitting"
+    goal: "Fit mean/std, diagonal affine, and full affine/ridge transforms on tiny paired features."
+    preconditions:
+      - "Train features exist."
+      - "Length normalization policy is chosen for affine methods."
+    commands:
+      - "python3 <fit_transform_script> --method meanstd --train outputs/features/train --output outputs/transforms/meanstd"
+      - "python3 <fit_transform_script> --method diag_affine --train outputs/features/train --output outputs/transforms/diag_affine"
+      - "python3 <fit_transform_script> --method full_affine_ridge --train outputs/features/train --output outputs/transforms/full_affine"
+    expected_artifacts:
+      - "outputs/transforms/meanstd/params.json"
+      - "outputs/transforms/diag_affine/params.npz"
+      - "outputs/transforms/full_affine/W.npy"
+      - "outputs/transforms/full_affine/b.npy"
+      - "transformed_arti.npy"
+    success_criteria:
+      - "Transforms produce finite (T, 6) arrays."
+      - "Mean/std before and after transform are printed."
+    failure_diagnosis_instructions:
+      - "Exact error: shape mismatch, singular matrix, NaN/Inf output."
+      - "Likely cause: insufficient data, bad length normalization, or scale mismatch."
+      - "Next diagnostic command: print per-utterance source/target shapes and ranges."
+      - "Minimal fix: start with mean/std transform before affine methods."
+    status: PENDING
+
+  - id: gate_8
+    name: "Synthesis ablations"
+    goal: "Synthesize baseline and transformed variants for the required ablation audio set."
+    preconditions:
+      - "Feature extraction passes."
+      - "At least mean/std transform is fitted."
+      - "Synthesis API verified."
+    commands:
+      - "python3 <synth_script> --arti source_arti.npy --spk source_spk_emb.npy --out 03_source_reconstruction.wav"
+      - "python3 <synth_script> --arti source_arti.npy --spk target_spk_emb.npy --out 05_embedding_only_vc.wav"
+      - "python3 <synth_script> --arti transformed_arti.npy --spk target_spk_emb.npy --out 07_meanstd_transform_plus_target_spk.wav"
+    expected_artifacts:
+      - "01_source_original.wav"
+      - "02_target_reference.wav"
+      - "03_source_reconstruction.wav"
+      - "04_target_reconstruction.wav"
+      - "05_embedding_only_vc.wav"
+      - "06_meanstd_transform_only_source_spk.wav"
+      - "07_meanstd_transform_plus_target_spk.wav"
+      - "08_diag_affine_transform_plus_target_spk.wav"
+      - "09_full_affine_transform_plus_target_spk.wav"
+    success_criteria:
+      - "Required wav files are written."
+      - "Most important comparison is generated: embedding-only target speaker versus transformed-plus-target-speaker."
+    failure_diagnosis_instructions:
+      - "Exact error: synthesis API mismatch, range error, audio write failure."
+      - "Likely cause: feature normalization requirements or speaker embedding format mismatch."
+      - "Next diagnostic command: print synthesis input shapes/ranges and inspect ARTI-6 normalization code."
+      - "Minimal fix: apply verified feature normalization before synthesis."
+    status: PENDING
+
+  - id: gate_9
+    name: "Diagnostics"
+    goal: "Generate plots and tensor summaries to interpret transform behavior."
+    preconditions:
+      - "Source, target, and transformed ARTI arrays exist."
+      - "At least one transform has been fitted."
+    commands:
+      - "python3 <diagnostics_script> --input outputs/features --transforms outputs/transforms --output outputs/diagnostics"
+    expected_artifacts:
+      - "outputs/diagnostics/source_arti_trajectories.png"
+      - "outputs/diagnostics/transformed_arti_trajectories.png"
+      - "outputs/diagnostics/target_arti_trajectories.png"
+      - "outputs/diagnostics/mean_std_before_after.png"
+      - "outputs/diagnostics/full_affine_W_heatmap.png"
+      - "outputs/diagnostics/tensor_shapes_ranges.txt"
+    success_criteria:
+      - "All required diagnostic plots exist."
+      - "Every tensor shape and range is printed."
+    failure_diagnosis_instructions:
+      - "Exact error: missing arrays, plotting backend issue, shape mismatch."
+      - "Likely cause: earlier gate artifact missing or inconsistent naming."
+      - "Next diagnostic command: find outputs -type f | sort"
+      - "Minimal fix: standardize artifact paths and rerun failed prior gate."
+    status: PENDING
+
+  - id: gate_10
+    name: "Optional evaluation"
+    goal: "Run lightweight objective or listening-oriented checks only if useful after demo audio exists."
+    preconditions:
+      - "Ablation audio exists."
+      - "Evaluation scope is approved by human."
+    commands:
+      - "python3 <eval_script> --audio outputs/ablations --output outputs/eval"
+    expected_artifacts:
+      - "outputs/eval/summary.md"
+      - "Optional objective metrics"
+    success_criteria:
+      - "Evaluation supports feasibility decision without overclaiming quality."
+    failure_diagnosis_instructions:
+      - "Exact error: metric dependency missing or metric invalid for VC."
+      - "Likely cause: evaluation stack not installed or metric not appropriate."
+      - "Next diagnostic command: inspect metric requirements."
+      - "Minimal fix: defer evaluation and use qualitative demo plus diagnostics."
+    status: OPTIONAL
+
+  - id: gate_11
+    name: "Final feasibility report"
+    goal: "Decide whether ARTI-6 LinearVC is feasible and what claim is defensible."
+    preconditions:
+      - "Ablation audio and diagnostics exist, or blockers are documented."
+    commands:
+      - "python3 <summarize_script> --inputs outputs --notes research_notes --output research_notes/final_feasibility_report.md"
+    expected_artifacts:
+      - "research_notes/final_feasibility_report.md"
+      - "GO/PARTIAL GO/BLOCKED recommendation"
+    success_criteria:
+      - "Report states what was verified, what remains unknown, and whether articulatory transform adds beyond target speaker embedding."
+    failure_diagnosis_instructions:
+      - "Exact error: missing artifacts or unresolved blockers."
+      - "Likely cause: earlier gates incomplete."
+      - "Next diagnostic command: review gate statuses in this YAML."
+      - "Minimal fix: write a blocked feasibility report rather than filling gaps with assumptions."
+    status: PENDING
+
+global_failure_reporting:
+  required_fields:
+    - "exact_error"
+    - "likely_cause"
+    - "next_diagnostic_command"
+    - "minimal_fix"
+    - "status: GO | PARTIAL_GO | BLOCKED"

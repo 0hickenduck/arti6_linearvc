@@ -1,0 +1,22 @@
+# Direct runtime dependencies for:
+# - archive/provisional_research_harness/configs/task_arti6_linearvc.yaml
+# - external/arti-6/
+#
+# Keep this list focused on packages the project imports directly. pip will
+# resolve Python-version-compatible transitive dependencies for the active env.
+PyYAML>=6.0,<7
+torch
+torchaudio
+librosa
+huggingface-hub
+soundfile
+speechbrain
+transformers
+loralib
+matplotlib
+
+# Seed-VC pivot demo dependencies. Do not install Seed-VC's full requirements
+# file into this env because it pins an older torch stack.
+munch
+einops
+descript-audio-codec

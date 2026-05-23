@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="ARTI-6 + LinearVC is a research demo that asks whether changing six understandable vocal-tract controls can help explain voice conversion."
+    />
+    <title>ARTI-6 + LinearVC</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar shell">
+      <a class="brand" href="#top" aria-label="ARTI-6 + LinearVC home">
+        <span>ARTI-6</span>
+        <em>+</em>
+        <span>LinearVC</span>
+      </a>
+
+      <nav aria-label="Primary navigation">
+        <a href="#idea">Idea</a>
+        <a href="#comparison">Experiment</a>
+        <a href="#listen">Listen</a>
+        <a href="#status">Status</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero shell">
+        <div class="hero-copy">
+          <p class="eyebrow">Research demo · work in progress</p>
+          <h1>Can a voice change live in six understandable controls?</h1>
+          <p class="lede">
+            ARTI-6 + LinearVC explores whether speaker differences can be expressed
+            by gently reshaping six vocal-tract motion tracks, instead of hiding
+            the whole story inside an opaque speaker code.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button primary" href="#comparison">See the experiment</a>
+            <a class="button secondary" href="#listen">Hear ARTI-6</a>
+          </div>
+
+          <ul class="fact-row" aria-label="Project highlights">
+            <li><strong>6</strong><span>vocal-tract tracks</span></li>
+            <li><strong>(T, 6)</strong><span>time × articulation</span></li>
+            <li><strong>1 question</strong><span>does the transform help?</span></li>
+          </ul>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 680 560" role="presentation">
+            <defs>
+              <linearGradient id="warm" x1="0%" x2="100%">
+                <stop offset="0%" stop-color="#ffbe7a" />
+                <stop offset="100%" stop-color="#ff7a59" />
+              </linearGradient>
+              <linearGradient id="cool" x1="0%" x2="100%">
+                <stop offset="0%" stop-color="#7bdff2" />
+                <stop offset="100%" stop-color="#8f7cf6" />
+              </linearGradient>
+            </defs>
+
+            <rect x="34" y="42" width="612" height="476" rx="42" class="visual-card" />
+            <path
+              d="M112 170 C171 137, 227 145, 282 183 S390 233, 438 207 S533 154, 572 184"
+              class="wave warm"
+            />
+            <path
+              d="M112 243 C176 214, 229 219, 282 248 S390 300, 438 274 S531 224, 572 248"
+              class="wave cool"
+            />
+            <path
+              d="M112 316 C180 291, 230 293, 284 319 S392 365, 438 344 S531 300, 572 322"
+              class="wave muted"
+            />
+
+            <g class="node source">
+              <rect x="76" y="382" width="150" height="86" rx="24" />
+              <text x="151" y="416">source</text>
+              <text x="151" y="442">speech</text>
+            </g>
+            <g class="node six">
+              <rect x="266" y="382" width="150" height="86" rx="24" />
+              <text x="341" y="416">six motion</text>
+              <text x="341" y="442">tracks</text>
+            </g>
+            <g class="node target">
+              <rect x="456" y="382" width="150" height="86" rx="24" />
+              <text x="531" y="416">converted</text>
+              <text x="531" y="442">speech</text>
+            </g>
+            <path d="M226 425 H252" class="arrow" />
+            <path d="M416 425 H442" class="arrow" />
+
+            <g class="chips">
+              <text x="112" y="111">LA</text>
+              <text x="177" y="111">TT</text>
+              <text x="242" y="111">TB</text>
+              <text x="307" y="111">VL</text>
+              <text x="372" y="111">TR</text>
+              <text x="437" y="111">LX</text>
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <section class="shell overview" id="idea">
+        <div class="section-heading">
+          <p class="eyebrow">The idea</p>
+          <h2>Speech, translated into anatomy-sized handles.</h2>
+        </div>
+
+        <div class="card-grid three-up">
+          <article class="card">
+            <span>01</span>
+            <h3>Listen</h3>
+            <p>
+              ARTI-6 takes in speech and estimates a compact picture of how the
+              vocal tract is moving over time.
+            </p>
+          </article>
+          <article class="card">
+            <span>02</span>
+            <h3>Adjust</h3>
+            <p>
+              LinearVC asks whether a simple linear change to those six tracks can
+              carry part of what makes one speaker sound like another.
+            </p>
+          </article>
+          <article class="card">
+            <span>03</span>
+            <h3>Resynthesize</h3>
+            <p>
+              The adjusted tracks are turned back into audio, then compared with a
+              baseline that only swaps the speaker embedding.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="shell controls">
+        <div class="section-heading compact">
+          <p class="eyebrow">The six controls</p>
+          <h2>Small enough to inspect. Physical enough to reason about.</h2>
+        </div>
+
+        <div class="control-grid">
+          <article>
+            <strong>LA</strong>
+            <h3>Lip opening</h3>
+            <p>How open the lips are.</p>
+          </article>
+          <article>
+            <strong>TT</strong>
+            <h3>Tongue tip</h3>
+            <p>The front edge of the tongue.</p>
+          </article>
+          <article>
+            <strong>TB</strong>
+            <h3>Tongue body</h3>
+            <p>The larger middle shape of the tongue.</p>
+          </article>
+          <article>
+            <strong>VL</strong>
+            <h3>Soft palate</h3>
+            <p>The velum, which helps route airflow.</p>
+          </article>
+          <article>
+            <strong>TR</strong>
+            <h3>Tongue root</h3>
+            <p>The back of the tongue near the throat.</p>
+          </article>
+          <article>
+            <strong>LX</strong>
+            <h3>Voice box</h3>
+            <p>The laryngeal region behind pitch and voicing.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="shell experiment" id="comparison">
+        <div class="section-heading">
+          <p class="eyebrow">The experiment</p>
+          <h2>The useful comparison is not “can we convert a voice?”</h2>
+          <p>
+            It is whether the explicit articulatory transform adds something beyond
+            the target speaker embedding alone.
+          </p>
+        </div>
+
+        <div class="comparison">
+          <article class="lane baseline">
+            <p>Baseline</p>
+            <h3>Keep the source motion tracks</h3>
+            <code>source_arti + target_spk_emb</code>
+            <span>Swap only the speaker code.</span>
+          </article>
+
+          <div class="versus" aria-hidden="true">vs</div>
+
+          <article class="lane proposed">
+            <p>Proposed</p>
+            <h3>Transform the motion tracks too</h3>
+            <code>(W · source_arti + b) + target_spk_emb</code>
+            <span>Ask whether anatomy-space carries extra speaker information.</span>
+          </article>
+        </div>
+
+        <div class="pipeline" role="list" aria-label="Planned pipeline">
+          <div role="listitem">
+            <span>1</span>
+            <p>Invert source and target speech into six-track trajectories.</p>
+          </div>
+          <div role="listitem">
+            <span>2</span>
+            <p>Reconstruct each speaker to check the base model behaves.</p>
+          </div>
+          <div role="listitem">
+            <span>3</span>
+            <p>Build the embedding-only baseline.</p>
+          </div>
+          <div role="listitem">
+            <span>4</span>
+            <p>Fit linear transforms and synthesize the transformed variants.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell listening" id="listen">
+        <div class="section-heading">
+          <p class="eyebrow">Listen</p>
+          <h2>What the upstream ARTI-6 model already demonstrates.</h2>
+          <p>
+            These samples come from the official ARTI-6 materials. They show
+            reconstruction through the six-dimensional representation, not a
+            completed LinearVC result from this project.
+          </p>
+        </div>
+
+        <div class="audio-grid">
+          <article class="audio-card">
+            <h3>Reference speech</h3>
+            <p>Original audio from the upstream sample set.</p>
+            <audio controls preload="metadata">
+              <source src="./assets/audio/reference.wav" type="audio/wav" />
+            </audio>
+          </article>
+          <article class="audio-card accent">
+            <h3>ARTI-6 reconstruction</h3>
+            <p>Audio reconstructed from ARTI-6 features.</p>
+            <audio controls preload="metadata">
+              <source src="./assets/audio/arti6-reconstruction.wav" type="audio/wav" />
+            </audio>
+          </article>
+        </div>
+      </section>
+
+      <section class="shell status" id="status">
+        <div class="status-panel">
+          <div>
+            <p class="eyebrow">Current status</p>
+            <h2>This page is a doorway into an experiment, not a victory lap.</h2>
+          </div>
+
+          <div class="status-columns">
+            <article>
+              <h3>Verified upstream</h3>
+              <ul>
+                <li>ARTI-6 exposes inversion and synthesis APIs.</li>
+                <li>It represents speech with six articulatory channels.</li>
+                <li>The upstream paper reports a 0.87 inversion correlation.</li>
+              </ul>
+            </article>
+            <article>
+              <h3>Still being tested here</h3>
+              <ul>
+                <li>Whether a linear articulatory transform improves conversion.</li>
+                <li>How it compares with the embedding-only baseline.</li>
+                <li>What the resulting plots and converted audio reveal.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="shell footer">
+      <p>
+        Built from the local ARTI-6 + LinearVC research materials, with sample
+        audio sourced from the official upstream ARTI-6 project.
+      </p>
+    </footer>
+  </body>
+</html>

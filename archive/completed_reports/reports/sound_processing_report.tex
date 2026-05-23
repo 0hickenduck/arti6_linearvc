@@ -1,0 +1,199 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\geometry{
+    top=25mm,
+    bottom=25mm,
+    left=25mm,
+    right=25mm
+}
+
+\title{Advanced Signal Processing\\ (Advanced Musical Audio Signal Processing) Report}
+\author{Bowen Li \\ Student ID: 37266595}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Question 1}
+Answer the following questions regarding probabilistic signals and independent factor analysis.
+
+\subsection*{(1) Explain the differences between Independent Component Analysis (ICA), Independent Vector Analysis (IVA), and Independent Low-Rank Matrix Analysis (ILRMA).}
+
+These three methods are statistical approaches for Blind Source Separation (BSS), aiming to separate original source signals from mixtures observed by multiple microphones. Their primary differences lie in the assumptions made about the generative model of the sources (the dependencies and structures of frequency components):
+
+\begin{itemize}
+    \item \textbf{Independent Component Analysis (ICA):} 
+    ICA is based on the assumption that the source signals are statistically independent of each other. In Frequency-Domain ICA (FD-ICA), the separation process is performed independently for each frequency bin. However, this independent processing leads to the ``permutation problem,'' where the output channels for separated components are arbitrarily ordered across different frequency bins, requiring complex post-processing to align the frequency components belonging to the same source.
+    
+    \item \textbf{Independent Vector Analysis (IVA):}
+    IVA extends ICA to vector dimensions to fundamentally resolve the permutation problem. It treats all frequency components of a single source as a single vector. IVA assumes that while the sources (vectors) are mutually independent, there are strong dependencies among the frequency components (vector elements) within the same source. This dependency represents the co-occurrence of frequencies (e.g., when a voice sounds, many frequency components have power simultaneously). This assumption allows IVA to achieve separation with aligned permutations across all frequency bins without requiring post-processing.
+    
+    \item \textbf{Independent Low-Rank Matrix Analysis (ILRMA):}
+    ILRMA further refines the dependency model of IVA. While retaining the spatial assumption of IVA (independence between sources), ILRMA introduces a source model assuming that the power spectrogram of each source possesses a ``low-rank'' structure, which can be represented by Non-negative Matrix Factorization (NMF). By integrating spatial independence and spectral low-rank structure into a single objective function, ILRMA achieves higher separation accuracy than IVA.
+\end{itemize}
+
+\subsection*{(2) After reading the original paper on ``Independent Deeply Learned Matrix Analysis (IDLMA)'', state your thoughts on how the source model parameters are provided (learning methods, inference methods, etc.). Also, discuss methods for pre-training the spatial model parameters (separation matrix $W$).}
+
+\textbf{Thoughts on the Source Model Parameters:} \\
+The original IDLMA paper takes a groundbreaking approach by replacing the NMF-based linear source model used in ILRMA with a Deep Neural Network (DNN).
+\begin{itemize}
+    \item \textbf{Learning Method:} In the pre-training phase, a DNN is trained using clean speech spectrograms as inputs to estimate their power spectrograms. While linear combinations of NMF bases have limitations in representing complex non-linear structures of human speech (such as pitch variations and formants), the powerful representational capacity of DNNs allows the acquisition of highly accurate prior knowledge regarding the probabilistic distribution (time-frequency structure) of the target sources.
+    \item \textbf{Inference Method:} During the inference (separation) phase, the signals separated by the current spatial model (separation matrix) are fed into the DNN. The forward pass of the DNN updates the power (variance) of each source, which is then used to iteratively update the separation matrix. This effectively balances the strong prior knowledge of the DNN with the adaptability of the blind spatial model.
+    \item \textbf{Personal Perspective:} While replacing the source model with a DNN drastically improves separation accuracy, I believe the computational cost during inference remains a significant practical challenge. Since a DNN forward pass is required for every iterative update, deploying this on edge devices or for real-time processing will necessitate optimizations, such as model quantization or reducing the number of iterations. Furthermore, there are concerns regarding the ``bias of the pre-trained model,'' specifically how well the DNN generalizes to unknown sources not present in the training data.
+\end{itemize}
+
+\vspace{1em}
+\noindent \textbf{Discussing Pre-training Methods for the Spatial Model Parameters ($W$):} \\
+In IDLMA, to flexibly adapt to diverse recording environments (microphone placements and reverberation conditions), the spatial model (separation matrix $W$) is estimated completely blindly from the observed signals during inference. However, to accelerate separation and avoid local optima, pre-training $W$ can be considered.
+\begin{itemize}
+    \item \textbf{Pre-training Idea:} Utilizing room acoustic simulators, vast amounts of data regarding room impulse responses (RIRs), source positions, and microphone array geometries can be generated. Using this simulated data, a ``Spatial DNN'' can be trained to take spatial features of the observed signals (e.g., inter-microphone phase differences, level differences, spatial covariance matrices) as inputs and directly output an optimal separation matrix $W$ (or a superior initialization $W_0$).
+    \item \textbf{Advantages and Challenges:} If the spatial model can also be pre-trained via data-driven methods, the need for from-scratch iterative optimization during inference is eliminated, significantly accelerating the convergence of IDLMA. However, performance is highly likely to degrade when faced with unknown microphone counts or spacings not encountered during training. Therefore, designing invariant features that are robust to varying microphone configurations will be the key challenge.
+\end{itemize}
+
+\newpage
+\section*{Question 2}
+Recently, optimization based on the auxiliary function method has been introduced in many acoustic signal processing tasks. Answer the following regarding this method.
+
+\subsection*{(1) Explain the principle of the auxiliary function method. Furthermore, compare it with other representative optimization methods (such as the steepest descent method and Newton's method) to explain its advantages.}
+
+\textbf{Principle of the Auxiliary Function Method (MM Algorithm):} \\
+The auxiliary function method, also known as the Majorization-Minimization (MM) algorithm, is an optimization technique where instead of directly optimizing the target objective function $J(\theta)$, optimization is performed on an ``auxiliary function'' $J^+(\theta, \tilde{\theta})$. Here, $\tilde{\theta}$ is an auxiliary variable. The auxiliary function must touch the original objective function at the current parameter $\theta^{(t)}$ and act as an upper bound (be strictly greater than or equal to the objective function) everywhere else.
+The algorithm alternates between two steps:
+\begin{enumerate}
+    \item \textbf{Majorization:} Using the current parameter $\theta^{(t)}$, update the auxiliary variable such that the auxiliary function touches the objective function ($\tilde{\theta} = \theta^{(t)}$).
+    \item \textbf{Minimization:} Find the new parameter $\theta^{(t+1)}$ that minimizes the constructed auxiliary function $J^+(\theta, \theta^{(t)})$.
+\end{enumerate}
+This process guarantees that $J(\theta^{(t+1)}) \leq J^+(\theta^{(t+1)}, \theta^{(t)}) \leq J^+(\theta^{(t)}, \theta^{(t)}) = J(\theta^{(t)})$, mathematically ensuring that the objective function monotonically decreases (or remains constant) at every iteration.
+
+\vspace{1em}
+\noindent \textbf{Advantages Compared to Other Optimization Methods:}
+\begin{itemize}
+    \item \textbf{Comparison with Steepest Descent:} The steepest descent method updates parameters in the direction of the gradient, requiring careful tuning of the learning rate (step size). If the learning rate is too large, it diverges; if too small, convergence is exceedingly slow. The auxiliary function method does not have a step size hyperparameter. Since the optimal update step can often be derived analytically, it requires no tuning and offers the immense advantage of guaranteed monotonic convergence without divergence.
+    \item \textbf{Comparison with Newton's Method:} Newton's method requires the computation of the Hessian matrix (second-order derivatives) and its inverse. In problems with high-dimensional parameters like NMF, this computation becomes prohibitively massive and impractical. The auxiliary function method avoids complex derivative calculations and matrix inversions. It often allows the derivation of independent analytical update formulas (like multiplicative update rules) for each parameter, enabling lightweight computations per iteration while maintaining stable optimization.
+\end{itemize}
+
+\subsection*{(2) Perform Non-negative Matrix Factorization (NMF) using the auxiliary function method. Derive the minimization process for the Frobenius norm.}
+
+Let the observed non-negative matrix be $Y \in \mathbb{R}_{\geq 0}^{M \times N}$, and the matrices to be decomposed be $H \in \mathbb{R}_{\geq 0}^{M \times K}$ and $U \in \mathbb{R}_{\geq 0}^{K \times N}$. The objective function (squared Frobenius norm) is defined as:
+
+\begin{equation}
+J(H, U) = \frac{1}{2} \|Y - HU\|_F^2 = \frac{1}{2} \sum_{i,j} \left( Y_{ij} - \sum_k H_{ik}U_{kj} \right)^2
+\end{equation}
+
+Expanding this gives:
+\begin{equation}
+J(H, U) = \frac{1}{2} \sum_{i,j} \left( Y_{ij}^2 - 2 Y_{ij} \sum_k H_{ik}U_{kj} + \left(\sum_k H_{ik}U_{kj}\right)^2 \right)
+\end{equation}
+
+The third term $\left(\sum_k H_{ik}U_{kj}\right)^2$ contains cross terms of variables, making direct optimization difficult. We introduce auxiliary variables $\lambda_{ikj} \ge 0$ (where $\sum_k \lambda_{ikj} = 1$) and apply Jensen's inequality for the convex function $f(x) = x^2$ to find an upper bound for this term:
+
+\begin{equation}
+\left( \sum_k H_{ik}U_{kj} \right)^2 = \left( \sum_k \lambda_{ikj} \frac{H_{ik}U_{kj}}{\lambda_{ikj}} \right)^2 \leq \sum_k \lambda_{ikj} \left( \frac{H_{ik}U_{kj}}{\lambda_{ikj}} \right)^2 = \sum_k \frac{H_{ik}^2 U_{kj}^2}{\lambda_{ikj}}
+\end{equation}
+
+This provides the auxiliary function $J^+(H, U, \lambda)$ for the objective function:
+\begin{equation}
+J^+(H, U, \lambda) = \frac{1}{2} \sum_{i,j} \left( Y_{ij}^2 - 2 Y_{ij} \sum_k H_{ik}U_{kj} + \sum_k \frac{H_{ik}^2 U_{kj}^2}{\lambda_{ikj}} \right)
+\end{equation}
+
+\textbf{Optimization Process (Derivation of Update Rules):}
+
+\textbf{Step 1: Optimization of auxiliary variables $\lambda$} \\
+The equality in Jensen's inequality holds when all terms are constant, i.e., when $\frac{H_{ik}U_{kj}}{\lambda_{ikj}}$ does not depend on $k$. Let the current parameters be $\bar{H}, \bar{U}$. Under the constraint $\sum_k \lambda_{ikj} = 1$, the optimal $\lambda_{ikj}$ is updated as:
+\begin{equation}
+\lambda_{ikj} = \frac{\bar{H}_{ik}\bar{U}_{kj}}{\sum_{k'} \bar{H}_{ik'}\bar{U}_{k'j}} = \frac{\bar{H}_{ik}\bar{U}_{kj}}{(\bar{H}\bar{U})_{ij}}
+\end{equation}
+
+\textbf{Step 2: Optimization of parameters $H, U$} \\
+Taking the partial derivative of the auxiliary function $J^+$ with respect to $H_{ik}$ and setting it to 0:
+\begin{equation}
+\frac{\partial J^+}{\partial H_{ik}} = \sum_j \left( - Y_{ij} U_{kj} + \frac{H_{ik} U_{kj}^2}{\lambda_{ikj}} \right) = 0
+\end{equation}
+\begin{equation}
+H_{ik} = \frac{\sum_j Y_{ij} U_{kj}}{\sum_j \frac{U_{kj}^2}{\lambda_{ikj}}}
+\end{equation}
+Substituting $\lambda_{ikj}$ obtained in Step 1, the denominator becomes:
+\begin{equation}
+\sum_j \frac{U_{kj}^2}{\bar{H}_{ik}\bar{U}_{kj} / (\bar{H}\bar{U})_{ij}} = \frac{1}{\bar{H}_{ik}} \sum_j U_{kj} (\bar{H}\bar{U})_{ij}
+\end{equation}
+Substituting this back into the equation for $H_{ik}$ and rearranging yields the multiplicative update rule:
+\begin{equation}
+H_{ik} = \bar{H}_{ik} \frac{\sum_j Y_{ij} U_{kj}}{\sum_j (\bar{H}\bar{U})_{ij} U_{kj}}
+\end{equation}
+In matrix notation, this is expressed as follows. The update rule for $U$ can be derived symmetrically.
+\begin{equation}
+H \leftarrow H \circ \frac{Y U^T}{(H U) U^T}, \quad U \leftarrow U \circ \frac{H^T Y}{H^T (H U)}
+\end{equation}
+(where $\circ$ denotes element-wise multiplication, and fractions denote element-wise division).
+
+\subsection*{(3) Derive the optimization process for NMF under the I-divergence and Itakura-Saito (IS) divergence criteria.}
+
+\subsubsection*{Case of I-Divergence (KL Divergence)}
+The objective function is defined as follows (omitting and rearranging constant terms):
+\begin{equation}
+J(H, U) = \sum_{i,j} \left( Y_{ij} \log \frac{Y_{ij}}{(HU)_{ij}} - Y_{ij} + (HU)_{ij} \right) \Rightarrow \sum_{i,j} \left( - Y_{ij} \log \left(\sum_k H_{ik}U_{kj}\right) + \sum_k H_{ik}U_{kj} \right)
+\end{equation}
+
+Since the first term $-\log(x)$ is a convex function, we use Jensen's inequality to construct an upper bound, similar to the Frobenius norm. Introducing auxiliary variables $\lambda_{ikj} = \frac{\bar{H}_{ik}\bar{U}_{kj}}{(\bar{H}\bar{U})_{ij}}$:
+\begin{equation}
+- \log \left( \sum_k H_{ik}U_{kj} \right) \leq - \sum_k \lambda_{ikj} \log \left( \frac{H_{ik}U_{kj}}{\lambda_{ikj}} \right)
+\end{equation}
+The auxiliary function $J^+$ becomes:
+\begin{equation}
+J^+(H, U, \lambda) = \sum_{i,j} \left( - Y_{ij} \sum_k \lambda_{ikj} \log \left( \frac{H_{ik}U_{kj}}{\lambda_{ikj}} \right) + \sum_k H_{ik}U_{kj} \right)
+\end{equation}
+Taking the partial derivative with respect to $H_{ik}$ and setting it to 0:
+\begin{equation}
+\frac{\partial J^+}{\partial H_{ik}} = \sum_j \left( - Y_{ij} \frac{\lambda_{ikj}}{H_{ik}} + U_{kj} \right) = 0 \quad \Rightarrow \quad H_{ik} = \frac{\sum_j Y_{ij} \lambda_{ikj}}{\sum_j U_{kj}}
+\end{equation}
+Substituting $\lambda_{ikj}$:
+\begin{equation}
+H_{ik} = \frac{\sum_j Y_{ij} \frac{\bar{H}_{ik} \bar{U}_{kj}}{(\bar{H}\bar{U})_{ij}}}{\sum_j U_{kj}} = \bar{H}_{ik} \frac{\sum_j \frac{Y_{ij}}{(\bar{H}\bar{U})_{ij}} U_{kj}}{\sum_j U_{kj}}
+\end{equation}
+The matrix notation for the update rules is:
+\begin{equation}
+H \leftarrow H \circ \frac{(Y / (HU)) U^T}{\mathbf{1}_{M \times N} U^T}, \quad U \leftarrow U \circ \frac{H^T (Y / (HU))}{H^T \mathbf{1}_{M \times N}}
+\end{equation}
+
+\subsubsection*{Case of Itakura-Saito (IS) Divergence}
+The objective function is defined as:
+\begin{equation}
+J(H, U) = \sum_{i,j} \left( \frac{Y_{ij}}{(HU)_{ij}} - \log \frac{Y_{ij}}{(HU)_{ij}} - 1 \right) = \sum_{i,j} \left( \frac{Y_{ij}}{\sum_k H_{ik}U_{kj}} + \log \left(\sum_k H_{ik}U_{kj}\right) - \log Y_{ij} - 1 \right)
+\end{equation}
+
+This function contains a first term relating to the convex function $\frac{1}{x}$, and a second term relating to the concave function $\log(x)$.
+\begin{enumerate}
+    \item \textbf{Upper bound for the first term (convex part):} We use Jensen's inequality (with the same auxiliary variables $\lambda_{ikj}$).
+    \begin{equation}
+    \frac{1}{\sum_k H_{ik}U_{kj}} \leq \sum_k \lambda_{ikj} \frac{\lambda_{ikj}}{H_{ik}U_{kj}} = \sum_k \frac{\lambda_{ikj}^2}{H_{ik}U_{kj}}
+    \end{equation}
+    \item \textbf{Upper bound for the second term (concave part):} We use the tangent inequality (first-order Taylor expansion) around the current parameter $(\bar{H}\bar{U})_{ij}$.
+    \begin{equation}
+    \log \left(\sum_k H_{ik}U_{kj}\right) \leq \log \left((\bar{H}\bar{U})_{ij}\right) + \frac{\sum_k H_{ik}U_{kj} - (\bar{H}\bar{U})_{ij}}{(\bar{H}\bar{U})_{ij}}
+    \end{equation}
+\end{enumerate}
+
+Integrating these into the auxiliary function $J^+$, we take the partial derivative with respect to $H_{ik}$ and set it to 0:
+\begin{equation}
+\frac{\partial J^+}{\partial H_{ik}} = \sum_j \left( - Y_{ij} \frac{\lambda_{ikj}^2}{H_{ik}^2 U_{kj}} + \frac{U_{kj}}{(\bar{H}\bar{U})_{ij}} \right) = 0
+\end{equation}
+Solving for $H_{ik}$ yields:
+\begin{equation}
+H_{ik}^2 = \frac{\sum_j Y_{ij} \frac{\lambda_{ikj}^2}{U_{kj}}}{\sum_j \frac{U_{kj}}{(\bar{H}\bar{U})_{ij}}} = \frac{\sum_j Y_{ij} \frac{\bar{H}_{ik}^2 \bar{U}_{kj}^2}{U_{kj} (\bar{H}\bar{U})_{ij}^2}}{\sum_j \frac{U_{kj}}{(\bar{H}\bar{U})_{ij}}} = \bar{H}_{ik}^2 \frac{\sum_j Y_{ij} \frac{\bar{U}_{kj}}{(\bar{H}\bar{U})_{ij}^2}}{\sum_j \frac{U_{kj}}{(\bar{H}\bar{U})_{ij}}}
+\end{equation}
+Taking the square root provides the matrix notation update rules:
+\begin{equation}
+H \leftarrow H \circ \sqrt{ \frac{(Y / (HU)^{\circ 2}) U^T}{(1 / (HU)) U^T} }, \quad U \leftarrow U \circ \sqrt{ \frac{H^T (Y / (HU)^{\circ 2})}{H^T (1 / (HU))} }
+\end{equation}
+(Note: $^{\circ 2}$ denotes element-wise squaring, and the square root is applied element-wise).
+
+\end{document}
