@@ -22,9 +22,9 @@ Initialize the Git repository and configure the local user identity to enable pr
 
 ## Acceptance Criteria (evolving)
 
-* [ ] `git status` works in the root directory.
-* [ ] A valid initial commit exists.
-* [ ] Local user configuration is set.
+* [x] `git status` works in the root directory.
+* [x] A valid initial commit exists.
+* [x] Local user configuration is set.
 
 ## Definition of Done (team quality bar)
 
