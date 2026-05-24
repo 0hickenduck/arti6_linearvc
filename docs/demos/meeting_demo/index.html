@@ -1,14 +1,9 @@
-import os
-import shutil
-import zipfile
-
-def create_html(output_path, title, subtitle, badge, zip_name):
-    html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>__TITLE__</title>
+    <title>Voice Conversion Research Dashboard - Advisor 1-on-1</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -568,14 +563,14 @@ def create_html(output_path, title, subtitle, badge, zip_name):
     <header>
         <div class="logo-section">
             <h1>LinearVC & Timbre Pivoting Dashboard</h1>
-            <p>__SUBTITLE__</p>
+            <p>Advisor One-on-One Interaction Demo Interface</p>
         </div>
         <div class="header-actions">
             <div class="meeting-badge">
                 <span class="pulse-dot"></span>
-                __BADGE__
+                Advisor Meeting: 1-on-1 Presentation
             </div>
-            <a href="__ZIP_NAME__" class="download-btn" download>
+            <a href="meeting_demo.zip" class="download-btn" download>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 Download Offline ZIP
             </a>
@@ -1259,103 +1254,4 @@ def create_html(output_path, title, subtitle, badge, zip_name):
         }
     </script>
 </body>
-</html>"""
-
-    html_content = html_content.replace("__TITLE__", title)
-    html_content = html_content.replace("__SUBTITLE__", subtitle)
-    html_content = html_content.replace("__BADGE__", badge)
-    html_content = html_content.replace("__ZIP_NAME__", zip_name)
-
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(html_content)
-    print(f"Created index.html at {output_path}")
-
-def main():
-    import argparse
-    parser = argparse.ArgumentParser(description="Build and package self-contained research demos.")
-    parser.add_argument("--name", type=str, default="voice_conversion", help="Folder name inside docs/demos/")
-    parser.add_argument("--title", type=str, default="Voice Conversion Research Dashboard", help="HTML page title")
-    parser.add_argument("--subtitle", type=str, default="Research and Development Comparative Demo Interface", help="Logo area subtitle")
-    parser.add_argument("--badge", type=str, default="Research Demo: Voice Conversion", help="Badge text beside logo")
-    args = parser.parse_args()
-
-    demo_dir = os.path.join("docs", "demos", args.name)
-    audio_dir = os.path.join(demo_dir, "audio")
-    os.makedirs(audio_dir, exist_ok=True)
-    
-    files_map = {
-        "outputs/linearvc_floor/scaling_20train_1test/audio/01_source_reconstruction.wav": "linearvc_01.wav",
-        "outputs/linearvc_floor/scaling_20train_1test/audio/02_target_reconstruction.wav": "linearvc_02.wav",
-        "outputs/linearvc_floor/scaling_20train_1test/audio/03_embedding_only_vc.wav": "linearvc_03.wav",
-        "outputs/linearvc_floor/scaling_20train_1test/audio/04_oracle_target_arti_plus_source_spk.wav": "linearvc_04.wav",
-        "outputs/linearvc_floor/scaling_20train_1test/audio/07_pure_meanstd_transform_plus_source_spk.wav": "linearvc_07.wav",
-        "outputs/linearvc_floor/scaling_20train_1test/audio/08_pure_diag_affine_transform_plus_source_spk.wav": "linearvc_08.wav",
-        "outputs/linearvc_floor/scaling_20train_1test/audio/09_pure_full_affine_transform_plus_source_spk.wav": "linearvc_09.wav",
-        "outputs/linearvc_floor/scaling_20train_1test/audio/14_hybrid_diag_affine_transform_plus_target_spk.wav": "linearvc_14.wav",
-        "outputs/linearvc_floor/scaling_20train_1test/audio/15_hybrid_full_affine_transform_plus_target_spk.wav": "linearvc_15.wav",
-        
-        "outputs/seedvc_pivot/gtsinger_en_alto1_to_ja_tenor1_30steps/audio/01_source_singing.wav": "seedvc_cross_source.wav",
-        "outputs/seedvc_pivot/gtsinger_en_alto1_to_ja_tenor1_30steps/audio/02_target_speech_reference.wav": "seedvc_cross_target.wav",
-        "outputs/seedvc_pivot/gtsinger_en_alto1_to_ja_tenor1_30steps/seedvc_raw/converted_target_singing_ref/vc_0000_0000_1.0_30_0.7.wav": "seedvc_cross_out.wav",
-        
-        "outputs/seedvc_pivot/gtsinger_en_alto1_to_en_tenor1_30steps/audio/01_source_singing.wav": "seedvc_same_source.wav",
-        "outputs/seedvc_pivot/gtsinger_en_alto1_to_en_tenor1_30steps/audio/02_target_speech_reference.wav": "seedvc_same_target.wav",
-        "outputs/seedvc_pivot/gtsinger_en_alto1_to_en_tenor1_30steps/seedvc_raw/converted_target_singing_ref/vc_0000_0000_1.0_30_0.7.wav": "seedvc_same_out.wav",
-    }
-    
-    print(f"Building demo '{args.name}' under {demo_dir}...")
-    print("Copying audio files to local demo folder...")
-    for src, dst in files_map.items():
-        if os.path.exists(src):
-            shutil.copy(src, os.path.join(audio_dir, dst))
-            print(f"Copied {src} -> {dst}")
-        else:
-            print(f"Warning: source file {src} not found!")
-
-    # Create HTML page inside the demo folder
-    zip_name = f"{args.name}.zip"
-    create_html(os.path.join(demo_dir, "index.html"), args.title, args.subtitle, args.badge, zip_name)
-    
-    # Compress into a self-contained ZIP archive
-    zip_path = os.path.join(demo_dir, zip_name)
-    print(f"Compressing demo folder to {zip_path}...")
-    
-    with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        for root, dirs, files in os.walk(demo_dir):
-            for file in files:
-                if file.endswith('.zip'):
-                    continue
-                file_path = os.path.join(root, file)
-                # Keep directory structure relative to demo_dir so extracting it is clean
-                archive_name = os.path.relpath(file_path, demo_dir)
-                zipf.write(file_path, arcname=archive_name)
-                
-    print(f"Successfully created a self-contained ZIP archive at: {zip_path}")
-    print(f"Size of ZIP: {os.path.getsize(zip_path) / (1024*1024):.2f} MB")
-
-    # Clean up legacy scattered files to keep outputs pristine (DO NOT delete other docs/demos folders)
-    legacy_files = [
-        "outputs/meeting_demo.zip",
-        "outputs/meeting_demo.html"
-    ]
-    for lf in legacy_files:
-        if os.path.exists(lf):
-            try:
-                os.remove(lf)
-                print(f"Cleaned up legacy file: {lf}")
-            except Exception as e:
-                print(f"Warning: could not remove legacy file {lf}: {e}")
-                
-    legacy_dirs = [
-        "outputs/meeting_demo"
-    ]
-    for ld in legacy_dirs:
-        if os.path.exists(ld):
-            try:
-                shutil.rmtree(ld)
-                print(f"Cleaned up legacy directory: {ld}")
-            except Exception as e:
-                print(f"Warning: could not remove legacy directory {ld}: {e}")
-
-if __name__ == "__main__":
-    main()
+</html>
