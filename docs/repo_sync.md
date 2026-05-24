@@ -49,6 +49,28 @@ The following should stay out of normal git:
 
 Small demo audio that is intentionally part of a report can be force-added after review, but training data should move through out-of-band transfer.
 
+## Data Packaging Policy
+
+Keep generated audio datasets as expanded directories by default. On the lab
+server, expanded directories are easier to preview and audit than `.tar.gz` or
+`.zip` files.
+
+Default:
+
+* keep `data/vtuber_curated_*` as normal folders;
+* keep manifests beside the audio they describe;
+* use `rsync` for local/server transfer.
+
+Only create archives when there is a specific reason:
+
+* temporary transfer packaging when direct folder sync is inconvenient;
+* portable HTML demo/report bundles that need `index.html` plus linked assets in
+  one downloadable unit;
+* user explicitly asks for an archive.
+
+Archives made only for transfer should be treated as disposable local artifacts,
+not as canonical dataset outputs.
+
 ## External Dependencies
 
 `external/seed-vc` is a submodule:
@@ -61,7 +83,9 @@ The working tree may also contain large local files inside that checkout. Those 
 
 ## Large Data Sync
 
-Use `scripts/sync-large-data.sh` for local/server data transfer. It uses `rsync` and does not delete remote files unless explicitly requested.
+Use `scripts/sync-large-data.sh` for local/server data transfer. It syncs
+expanded folders with `rsync` and does not delete remote files unless explicitly
+requested.
 
 Push local generated data to the lab server:
 
@@ -84,6 +108,6 @@ DRY_RUN=1 scripts/sync-large-data.sh push bowen@valkyrie08:/home/bowen/bowen_lab
 Customize synced paths with `SYNC_PATHS`, separated by spaces:
 
 ```bash
-SYNC_PATHS="data/vtuber_curated_conservative data/manifests" \
+SYNC_PATHS="data/vtuber_curated_conservative_20260524_run2 data/manifests" \
   scripts/sync-large-data.sh push bowen@valkyrie08:/home/bowen/bowen_lab/projects/arti6_linearvc
 ```

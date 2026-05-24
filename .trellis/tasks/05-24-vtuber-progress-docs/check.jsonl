@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/vtuber_pipeline/backend/index.md", "reason": "Verify no-compression-by-default policy is captured for VTuber data"}
+{"file": ".trellis/spec/repo-structure.md", "reason": "Verify docs match workspace split and ignored data policy"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Verify current output path and manifest docs match curation contract"}

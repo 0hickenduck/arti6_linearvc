@@ -5,7 +5,8 @@ large data or generated model artifacts.
 
 ## Lanes
 
-- `vtuber_voice/`: Current VTuber speech/singing data curation work.
+- `vtuber_voice/`: Current VTuber speech/singing data curation work. See
+  `vtuber_voice/progress.md` for current status.
 - `arti6_linearvc/`: Original ARTI-6 + LinearVC demo work.
 - `trellis_harness/`: Local Trellis and AI-platform integration work.
 

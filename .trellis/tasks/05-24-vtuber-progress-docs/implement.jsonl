@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/vtuber_pipeline/backend/index.md", "reason": "VTuber pipeline rules for generated data and manifests"}
+{"file": ".trellis/spec/repo-structure.md", "reason": "Workspace split and large-data-out-of-git policy"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "VTuber conservative curation output contract"}

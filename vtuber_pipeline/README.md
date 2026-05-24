@@ -2,9 +2,21 @@
 
 This package contains the automated tools for discovering, scraping, purifying, and segmenting VTuber audio into clean datasets for voice conversion research.
 
-## Quick Start (The "One-Click" Agent)
+## Current Recommended Flow
 
-You can run the entire pipeline—from AI video discovery all the way to uploading the final clean dataset to your server—using the local orchestrator agent.
+For the current VTuber voice work, prefer the conservative existing-WAV curation
+flow below. It keeps generated audio as expanded directories so clips can be
+previewed directly on the server.
+
+Do not compress segmentation outputs by default. Create archives only when the
+user explicitly needs temporary transfer packaging or a portable HTML demo/report
+bundle.
+
+## Legacy One-Click Agent
+
+The local orchestrator agent is older and can still run discovery/download/
+purification/upload experiments, but its archive/upload behavior is not the
+default for the current workflow.
 
 ### Prerequisites
 
@@ -22,7 +34,9 @@ You can run the entire pipeline—from AI video discovery all the way to uploadi
    export GEMINI_API_KEY="your_api_key_here"
    ```
 
-2. (Optional) Set your upload credentials. If you set these, the agent will automatically `scp` the final `.tar.gz` dataset to your server. If you leave them empty, it will just leave the `.tar.gz` on your local machine.
+2. (Optional, legacy) Set upload credentials only if you explicitly want the
+   orchestrator to package and transfer an archive. Leave these unset for normal
+   server-preview workflows.
    ```bash
    export UPLOAD_SERVER_IP="192.168.1.100"
    export UPLOAD_SERVER_USER="bowen"
@@ -34,12 +48,13 @@ You can run the entire pipeline—from AI video discovery all the way to uploadi
    python3 vtuber_pipeline/src/local_agent.py "https://www.youtube.com/@EnnaAlouette" --max-videos 20
    ```
 
-### What it does automatically:
+### Legacy behavior:
 1. **Discovery:** Calls Gemini Flash to look at the channel's recent 20 videos, avoiding collabs and cleanly separating `Speech` (Zatsudan) from `Singing` (Karaoke).
 2. **Download:** Uses `yt-dlp` to download the audio tracks.
 3. **Purify:** Runs Demucs to strip background music, and Silero VAD to slice the audio into clean 3-15 second chunks.
-4. **Archive:** Zips all the clean chunks into `data/dataset_EnnaAlouette_YYYYMMDD.tar.gz`.
-5. **Upload:** Uses SCP to securely send the `.tar.gz` to your server.
+4. **Archive/Upload:** May package outputs into a `.tar.gz` and upload it when
+   legacy upload settings are configured. This is not the current recommended
+   path for previewable segmentation output.
 
 ## Conservative Segmentation From Existing WAVs
 
@@ -49,10 +64,19 @@ When raw WAVs and Demucs vocal stems already exist, run the conservative curatio
 .venv/bin/python vtuber_pipeline/src/curate_existing_audio.py \
   --input-dir data/raw_audio \
   --vocal-dir data/temp_demucs \
-  --output-dir data/vtuber_curated_conservative \
+  --vocal-dir data/demucs_tmp \
+  --output-dir data/vtuber_curated_conservative_20260524_run2 \
   --max-source-sec 1200
 ```
 
 This pass uses existing `<video_id>_vocals.wav` files when available. Singing is segmented by vocal activity and phrase continuity, not by ASR text, so non-lexical target vocal material such as sustained notes, humming, breaths, and ad libs is not discarded only because Whisper cannot transcribe it.
 
 Outputs are split into `clean_candidate/`, `review/`, and `quarantine/`, with a JSONL manifest recording source video id, timestamps, processing source, and the reason for each status.
+
+The latest validated output snapshot is:
+
+```text
+data/vtuber_curated_conservative_20260524_run2/
+```
+
+It contains 241 WAV segments and should stay expanded for server-side preview.

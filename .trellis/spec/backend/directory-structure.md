@@ -332,6 +332,11 @@ Output layout:
 - `{output_dir}/sources.json`
 - `{output_dir}/skipped_sources.json`
 
+The curation output must remain an expanded directory by default so audio can be
+previewed on the server. Do not create `.tar.gz` or `.zip` archives as part of
+the normal segmentation run. Temporary transfer archives and portable HTML demo
+bundles require an explicit user request.
+
 Manifest rows must include:
 
 - `segment_id`
