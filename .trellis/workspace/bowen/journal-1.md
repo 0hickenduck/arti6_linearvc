@@ -467,3 +467,37 @@ Compiled a comprehensive Mid-Term Research Handoff Report summarizing the journe
 ### Next Steps
 
 - None - task complete
+
+
+## Session 15: Complete Version 3 VTuber Data Pipeline & Unlocked Speech Dataset
+
+**Date**: 2026-05-24
+**Task**: Complete Version 3 VTuber Data Pipeline & Unlocked Speech Dataset
+**Package**: vtuber_pipeline
+**Branch**: `master`
+
+### Summary
+
+Resolved yt-dlp/SABR streaming 403 download failures using standalone compiled yt-dlp binary via subprocess. Wrote scripts/prepare_raw_wavs.py to convert downloads to 48kHz stereo WAVs. Implemented v3 curation rules including verified solo creator speech bypass (--bypass-multi-speaker mori/enna), 5-minute minimum duration speech filter (blocking Shorts), and strict music classifications. Curated 85 WAV sources and output 6,977 segments including 726 clean speech segments for Enna and 415 clean speech segments for Mori.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `d5760d3` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
