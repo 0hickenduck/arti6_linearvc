@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 12
+- **Total Sessions**: 13
 - **Last Active**: 2026-05-24
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~403 | Active |
+| `journal-1.md` | ~437 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 13 | 2026-05-24 | VTuber progress docs and packaging policy | `ab12b1f` | `master` |
 | 12 | 2026-05-24 | VTuber conservative segmentation run | - | `master` |
 | 11 | 2026-05-24 | GitHub sync, Antigravity harness, and VTuber curation | `f5decfb`, `1f91549` | `master` |
 | 10 | 2026-05-23 | VTuber Local Agent Orchestrator | `b50072b` | `master` |

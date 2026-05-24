@@ -401,3 +401,37 @@ Ran conservative existing-WAV VTuber segmentation into data/vtuber_curated_conse
 ### Next Steps
 
 - None - task complete
+
+
+## Session 13: VTuber progress docs and packaging policy
+
+**Date**: 2026-05-24
+**Task**: VTuber progress docs and packaging policy
+**Package**: vtuber_pipeline
+**Branch**: `master`
+
+### Summary
+
+Documented current VTuber lane progress, clarified that segmentation outputs remain expanded directories for server preview by default, and limited archives to explicit transfer or portable demo/report bundle cases.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ab12b1f` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
