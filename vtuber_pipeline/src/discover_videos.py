@@ -56,7 +56,8 @@ def fetch_recent_videos(channel_url: str, max_downloads: int = 50) -> List[Dict[
                             'id': entry.get('id'),
                             'title': entry.get('title'),
                             'url': entry.get('url', f"https://www.youtube.com/watch?v={entry.get('id')}"),
-                            'channel_id': entry.get('channel_id') or info.get('id')
+                            'channel_id': entry.get('channel_id') or info.get('id'),
+                            'duration': entry.get('duration') # Extract duration in seconds if available
                         })
             else:
                 # Single video
@@ -64,7 +65,8 @@ def fetch_recent_videos(channel_url: str, max_downloads: int = 50) -> List[Dict[
                     'id': info.get('id'),
                     'title': info.get('title'),
                     'url': info.get('webpage_url'),
-                    'channel_id': info.get('channel_id')
+                    'channel_id': info.get('channel_id'),
+                    'duration': info.get('duration')
                 })
         except Exception as e:
             logger.error(f"Failed to fetch videos: {e}")
@@ -86,7 +88,9 @@ def classify_videos_with_llm(videos: List[Dict[str, Any]], api_key: str) -> Dict
     prompt += "CRITICAL RULES:\n"
     prompt += "1. We need pure solo audio. If the title indicates a collaboration with an external guest (e.g., 'ft.', 'w/', 'x', 'コラボ'), classify as 'Collab'.\n"
     prompt += "2. **FUWAMOCO / TWIN EXCEPTION**: If the channel is inherently a twin/group (like FuwaMoco), DO NOT classify their standard streams as 'Collab'. Treat their Zatsudan as 'Speech' and their Karaoke as 'Singing'. Only mark 'Collab' if a *third* person joins them.\n"
-    prompt += "3. We want standard chatting (Zatsudan) for 'Speech'.\n\n"
+    prompt += "3. We want standard chatting (Zatsudan) for 'Speech'.\n"
+    prompt += "4. **NO SONGS/OST IN SPEECH**: Do NOT classify songs, soundtracks, original soundtracks (OST), original songs, music videos (MV), song covers, or remixes as 'Speech', even if the title says 'Talking' or seems like speech. If they are singing, classify as 'Singing'. If it is a published song track or MV, classify as 'Singing' (if solo) or 'Ignore' (if not useful for voice training).\n"
+    prompt += "5. **NO SHORTS/CLIPS IN SPEECH**: Do NOT classify YouTube Shorts or short clips (which often have highly edited, expressive voice styles) as 'Speech'. These should be classified as 'Ignore'.\n\n"
     
     prompt += "Videos to classify:\n"
     for v in videos:
@@ -122,6 +126,7 @@ def main():
     parser.add_argument("channel_url", help="YouTube Channel URL (e.g., https://www.youtube.com/@FUWAMOCOch)")
     parser.add_argument("--max-videos", type=int, default=30, help="Max videos to check")
     parser.add_argument("--output", default="discovery_manifest.json", help="Output JSON path")
+    parser.add_argument("--min-speech-duration", type=float, default=300.0, help="Minimum duration in seconds for Speech domain videos to filter out Shorts/clips")
     
     args = parser.parse_args()
     
@@ -145,6 +150,12 @@ def main():
         
         # We only want to prep Speech and Singing for our extraction pipeline
         if domain in ["Speech", "Singing"]:
+            # Perform minimum duration filtering for Speech videos
+            duration = v.get('duration')
+            if domain == "Speech" and duration is not None and duration < args.min_speech_duration:
+                logger.info(f"Skipping speech candidate {vid} because duration ({duration}s) is less than --min-speech-duration ({args.min_speech_duration}s)")
+                continue
+                
             manifest[vid] = {
                 'video_id': vid,
                 'channel_id': v['channel_id'],

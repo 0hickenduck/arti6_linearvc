@@ -50,3 +50,7 @@ mlruns/
 .idea/
 cookies*.txt
 dummy.wav
+
+# Local tools/binaries
+bin/
+

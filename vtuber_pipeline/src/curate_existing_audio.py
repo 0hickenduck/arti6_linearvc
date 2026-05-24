@@ -216,16 +216,26 @@ def build_segments(
     return segments
 
 
-def base_status(item: SourceItem, clean_speech_max_source_sec: float) -> Tuple[str, str]:
+def base_status(item: SourceItem, args: argparse.Namespace) -> Tuple[str, str]:
     channel = item.channel_id.lower()
     domain = item.domain.lower()
 
     if "fuwamoco" in channel:
         return "quarantine", "known_multi_speaker_or_twin_identity"
-    if "mori" in channel and is_speech_domain(domain):
+
+    bypass = False
+    if hasattr(args, 'bypass_multi_speaker') and args.bypass_multi_speaker:
+        bypass_list = [x.lower() for x in args.bypass_multi_speaker]
+        if channel in bypass_list or item.video_id.lower() in bypass_list:
+            bypass = True
+
+    if not bypass and "mori" in channel and is_speech_domain(domain):
         return "review", "mori_talking_may_include_multiple_speakers"
+
     if is_speech_domain(domain):
-        if item.raw_duration_sec > clean_speech_max_source_sec:
+        if hasattr(args, 'clean_speech_min_source_sec') and item.raw_duration_sec < args.clean_speech_min_source_sec:
+            return "review", "speech_source_too_short_likely_short_or_clip"
+        if item.raw_duration_sec > args.clean_speech_max_source_sec:
             return "review", "long_speech_needs_diarization"
         return "clean_candidate", "short_speech_candidate"
     if is_singing_domain(domain):
@@ -236,10 +246,9 @@ def base_status(item: SourceItem, clean_speech_max_source_sec: float) -> Tuple[s
 def segment_status(
     item: SourceItem,
     active_ratio: float,
-    clean_speech_max_source_sec: float,
     args: argparse.Namespace,
 ) -> Tuple[str, str]:
-    status, reason = base_status(item, clean_speech_max_source_sec)
+    status, reason = base_status(item, args)
     min_ratio = args.singing_min_active_ratio if is_singing_domain(item.domain) else args.speech_min_active_ratio
     if active_ratio < min_ratio and status == "clean_candidate":
         return "review", f"low_active_ratio:{reason}"
@@ -292,6 +301,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=0, help="Maximum source files to process.")
     parser.add_argument("--max-source-sec", type=float, default=0.0, help="Skip source files longer than this.")
     parser.add_argument("--clean-speech-max-source-sec", type=float, default=180.0)
+    parser.add_argument("--clean-speech-min-source-sec", type=float, default=300.0)
+    parser.add_argument(
+        "--bypass-multi-speaker",
+        action="append",
+        default=[],
+        help="Channels or video IDs (case-insensitive) to bypass hardcoded multi-speaker flags. Can be repeated.",
+    )
     parser.add_argument("--min-segment-sec", type=float, default=3.0)
     parser.add_argument("--max-segment-sec", type=float, default=15.0)
     parser.add_argument("--frame-ms", type=float, default=50.0)
@@ -375,7 +391,7 @@ def main() -> None:
             )
 
             for seg_index, (start_sec, end_sec, active_ratio, peak_db) in enumerate(segments):
-                status, reason = segment_status(item, active_ratio, args.clean_speech_max_source_sec, args)
+                status, reason = segment_status(item, active_ratio, args)
                 out_name = f"{item.video_id}_chunk{seg_index:04d}.wav"
                 output_path = output_dir / status / item.channel_id / item.domain / out_name
 
