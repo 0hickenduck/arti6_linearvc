@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/vtuber_pipeline/backend/index.md", "reason": "Verify generated data stays out of git and manifest traceability is preserved"}
+{"file": ".trellis/spec/backend/directory-structure.md", "reason": "Verify curation output contract and validation requirements"}
+{"file": ".trellis/spec/repo-structure.md", "reason": "Verify this run avoids physical path migration"}
