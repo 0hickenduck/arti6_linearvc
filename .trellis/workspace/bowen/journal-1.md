@@ -501,3 +501,39 @@ Resolved yt-dlp/SABR streaming 403 download failures using standalone compiled y
 ### Next Steps
 
 - None - task complete
+
+
+## Session 16: Refine VTuber Dataset Curation and Implement Dynamic Demo System
+
+**Date**: 2026-05-25
+**Task**: Refine VTuber Dataset Curation and Implement Dynamic Demo System
+**Package**: vtuber_pipeline
+**Branch**: `master`
+
+### Summary
+
+Completed VTuber Dataset Curation V3 with dry vocal stems and verified solo chatting overrides (Kiara, Enna, Mori). Implemented a dynamic argparse-driven build_demo.py script supporting simultaneous coexistence of meeting_demo and voice_conversion comparative dashboards with elegant Glassmorphic download buttons.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `469a065` | (see git log) |
+| `adc71df` | (see git log) |
+| `0993ea3` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

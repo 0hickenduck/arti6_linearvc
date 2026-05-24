@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 15
-- **Last Active**: 2026-05-24
+- **Total Sessions**: 16
+- **Last Active**: 2026-05-25
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~503 | Active |
+| `journal-1.md` | ~539 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 16 | 2026-05-25 | Refine VTuber Dataset Curation and Implement Dynamic Demo System | `469a065`, `adc71df`, `0993ea3` | `master` |
 | 15 | 2026-05-24 | Complete Version 3 VTuber Data Pipeline & Unlocked Speech Dataset | `d5760d3` | `master` |
 | 14 | 2026-05-24 | Write midterm research handoff report | - | `master` |
 | 13 | 2026-05-24 | VTuber progress docs and packaging policy | `ab12b1f` | `master` |
