@@ -369,3 +369,35 @@ Configured GitHub-safe sync and submodule metadata, added Antigravity workflows/
 ### Next Steps
 
 - None - task complete
+
+
+## Session 12: VTuber conservative segmentation run
+
+**Date**: 2026-05-24
+**Task**: VTuber conservative segmentation run
+**Package**: vtuber_pipeline
+**Branch**: `master`
+
+### Summary
+
+Ran conservative existing-WAV VTuber segmentation into data/vtuber_curated_conservative_20260524_run2, preserving prior output; validated 241 manifest rows, 241 WAVs, zero zero-byte files, and 20 long sources skipped for later diarization/verification.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
