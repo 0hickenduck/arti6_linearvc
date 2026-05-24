@@ -290,6 +290,115 @@ for url in urls:
     time.sleep(args.sleep_requests)
 ```
 
-s)
+### Scenario: VTuber Conservative Curation From Existing WAVs
+
+#### 1. Scope / Trigger
+
+Use this pattern when existing raw WAVs and optional Demucs vocal stems already
+exist, and the task is to create training candidates without re-downloading from
+YouTube. This is especially important for singing data, where ASR text presence
+must not be used as the primary segmentation gate.
+
+#### 2. Signatures
+
+```bash
+.venv/bin/python vtuber_pipeline/src/curate_existing_audio.py \
+  --input-dir data/raw_audio \
+  --vocal-dir data/temp_demucs \
+  --vocal-dir data/demucs_tmp \
+  --output-dir data/vtuber_curated_conservative \
+  --max-source-sec 1200 \
+  --skip-existing
 ```
 
+#### 3. Contracts
+
+Input layout:
+
+- `data/raw_audio/{channel_id}/{domain}/{video_id}.wav`
+- Optional vocal stem: `{vocal_dir}/{video_id}_vocals.wav`
+
+The curation script must prefer existing vocal stems when available and fall
+back to raw WAV only when a stem is missing. It must not invoke downloaders or
+source separation.
+
+Output layout:
+
+- `{output_dir}/clean_candidate/{channel_id}/{domain}/{video_id}_chunkNNNN.wav`
+- `{output_dir}/review/{channel_id}/{domain}/{video_id}_chunkNNNN.wav`
+- `{output_dir}/quarantine/{channel_id}/{domain}/{video_id}_chunkNNNN.wav`
+- `{output_dir}/manifest.jsonl`
+- `{output_dir}/summary.json`
+- `{output_dir}/sources.json`
+- `{output_dir}/skipped_sources.json`
+
+Manifest rows must include:
+
+- `segment_id`
+- `channel_id`
+- `domain`
+- `video_id`
+- `status`
+- `reason`
+- `source_wav`
+- `processing_wav`
+- `processing_kind`
+- `output_wav`
+- `start_sec`
+- `end_sec`
+- `duration_sec`
+- `active_ratio`
+- `threshold_db`
+- `segmentation_strategy`
+
+#### 4. Validation & Error Matrix
+
+- Missing `--input-dir` -> raise `FileNotFoundError`.
+- WAV outside `{channel}/{domain}/{video_id}.wav` layout -> log `WARNING` and skip.
+- Source longer than `--max-source-sec` when set -> skip and record in `skipped_sources.json`.
+- Segment shorter than `--min-segment-sec` -> do not export.
+- Existing output with `--skip-existing` -> keep file and still emit manifest row.
+
+#### 5. Good/Base/Bad Cases
+
+- Good: Singing is segmented by vocal activity from an existing vocal stem, with
+  phrase-gap merging and padding, and output is tagged `clean_candidate`,
+  `review`, or `quarantine`.
+- Base: Short speech clips can be `clean_candidate` only when they come from
+  short sources; long speech should be `review` until diarization or target
+  speaker verification is applied.
+- Bad: Filtering singing by Whisper transcript text, discarding humming/ad-libs
+  only because they have no recognized linguistic content, or mixing FuwaMoco
+  twin audio into a single-speaker clean set.
+
+#### 6. Tests Required
+
+- `.venv/bin/python -m py_compile vtuber_pipeline/src/*.py`
+- `.venv/bin/python vtuber_pipeline/src/curate_existing_audio.py --help`
+- Run one curation pass and verify:
+  - `summary.json` exists and has nonzero `segment_count`.
+  - `manifest.jsonl` row count matches generated WAV count.
+  - No generated WAV file is zero bytes.
+  - Segment durations are within the configured min/max bounds.
+
+#### 7. Wrong vs Correct
+
+Wrong:
+
+```bash
+python vtuber_pipeline/src/segment_audio.py --input data/vtuber_clean
+```
+
+This uses ASR text as a semantic gate and can remove valid singing material.
+
+Correct:
+
+```bash
+.venv/bin/python vtuber_pipeline/src/curate_existing_audio.py \
+  --input-dir data/raw_audio \
+  --vocal-dir data/temp_demucs \
+  --output-dir data/vtuber_curated_conservative
+```
+
+This reuses existing vocal stems and segments singing by acoustic vocal activity
+instead of transcript availability.

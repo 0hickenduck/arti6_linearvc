@@ -40,3 +40,19 @@ You can run the entire pipeline—from AI video discovery all the way to uploadi
 3. **Purify:** Runs Demucs to strip background music, and Silero VAD to slice the audio into clean 3-15 second chunks.
 4. **Archive:** Zips all the clean chunks into `data/dataset_EnnaAlouette_YYYYMMDD.tar.gz`.
 5. **Upload:** Uses SCP to securely send the `.tar.gz` to your server.
+
+## Conservative Segmentation From Existing WAVs
+
+When raw WAVs and Demucs vocal stems already exist, run the conservative curation pass instead of downloading again:
+
+```bash
+.venv/bin/python vtuber_pipeline/src/curate_existing_audio.py \
+  --input-dir data/raw_audio \
+  --vocal-dir data/temp_demucs \
+  --output-dir data/vtuber_curated_conservative \
+  --max-source-sec 1200
+```
+
+This pass uses existing `<video_id>_vocals.wav` files when available. Singing is segmented by vocal activity and phrase continuity, not by ASR text, so non-lexical target vocal material such as sustained notes, humming, breaths, and ad libs is not discarded only because Whisper cannot transcribe it.
+
+Outputs are split into `clean_candidate/`, `review/`, and `quarantine/`, with a JSONL manifest recording source video id, timestamps, processing source, and the reason for each status.
