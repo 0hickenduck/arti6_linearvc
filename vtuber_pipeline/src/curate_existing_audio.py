@@ -45,6 +45,10 @@ def find_vocal_stem(video_id: str, vocal_dirs: Sequence[Path]) -> Optional[Path]
         candidate = vocal_dir / f"{video_id}_vocals.wav"
         if candidate.exists():
             return candidate
+        # Fallback to wildcard search for channel_id_video_id_vocals.wav pattern
+        matches = list(vocal_dir.glob(f"*_{video_id}_vocals.wav"))
+        if matches:
+            return matches[0]
     return None
 
 
