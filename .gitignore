@@ -21,9 +21,22 @@ logs/*.tmp
 *.pth
 *.bin
 *.safetensors
+*.onnx
 *.tar
 *.tar.gz
+*.tgz
+*.tar.bz2
 *.zip
+*.7z
+*.rar
+*.wav
+*.flac
+*.mp3
+*.m4a
+*.aac
+*.mp4
+*.mkv
+*.webm
 
 # ML experiment caches
 .huggingface/

@@ -76,6 +76,16 @@ max_journal_lines: 2000
 # Default package used when --package is not specified.
 # default_package: frontend
 
+packages:
+  vtuber_pipeline:
+    path: vtuber_pipeline
+  arti6_demo:
+    path: arti6_linearvc_demo
+  trellis_harness:
+    path: .trellis
+
+default_package: vtuber_pipeline
+
 #-------------------------------------------------------------------------------
 # Codex (dispatch behavior)
 #-------------------------------------------------------------------------------

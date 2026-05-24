@@ -12,7 +12,7 @@ Supported platforms:
 - kilo: Kilo CLI
 - kiro: Kiro Code (skills-based)
 - gemini: Gemini CLI
-- antigravity: Antigravity (workflow-based)
+- antigravity: Antigravity (workflow-based, with agy print-mode CLI support)
 - windsurf: Windsurf (workflow-based)
 - qoder: Qoder
 - codebuddy: CodeBuddy
@@ -367,9 +367,12 @@ class CLIAdapter:
             cmd = ["gemini"]
             cmd.append(prompt)
         elif self.platform == "antigravity":
-            raise ValueError(
-                "Antigravity workflows are UI slash commands; CLI agent run is not supported."
-            )
+            cmd = ["agy", "--print"]
+            if session_id:
+                cmd.extend(["--conversation", session_id])
+            if skip_permissions:
+                cmd.append("--dangerously-skip-permissions")
+            cmd.append(prompt)
         elif self.platform == "windsurf":
             raise ValueError(
                 "Windsurf workflows are UI slash commands; CLI agent run is not supported."
@@ -433,9 +436,7 @@ class CLIAdapter:
         elif self.platform == "gemini":
             return ["gemini", "--resume", session_id]
         elif self.platform == "antigravity":
-            raise ValueError(
-                "Antigravity workflows are UI slash commands; CLI resume is not supported."
-            )
+            return ["agy", "--conversation", session_id]
         elif self.platform == "windsurf":
             raise ValueError(
                 "Windsurf workflows are UI slash commands; CLI resume is not supported."
@@ -537,10 +538,18 @@ class CLIAdapter:
     def supports_cli_agents(self) -> bool:
         """Check if platform supports running agents via CLI.
 
-        Claude Code, OpenCode, iFlow, and Codex support CLI agent execution.
+        Claude Code, OpenCode, iFlow, Codex, Antigravity, and Pi support CLI
+        prompt execution.
         Cursor is IDE-only and doesn't support CLI agents.
         """
-        return self.platform in ("claude", "opencode", "iflow", "codex", "pi")
+        return self.platform in (
+            "claude",
+            "opencode",
+            "iflow",
+            "codex",
+            "antigravity",
+            "pi",
+        )
 
     @property
     def requires_agent_definition_file(self) -> bool:

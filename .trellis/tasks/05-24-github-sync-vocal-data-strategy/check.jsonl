@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/repo-structure.md", "reason": "Verify repo layout and source-of-truth rules"}
+{"file": ".trellis/spec/research-safety.md", "reason": "Verify host/data safety rules for sync scripts"}
+{"file": ".trellis/spec/vtuber_pipeline/backend/index.md", "reason": "Verify VTuber package-specific curation and segmentation rules"}
+{"file": ".trellis/spec/trellis_harness/meta/index.md", "reason": "Verify local Trellis and platform integration rules"}
+{"file": ".trellis/tasks/05-24-github-sync-vocal-data-strategy/research/youtube-audio-dataset-precedents.md", "reason": "Verify segmentation policy against research"}
+{"file": ".trellis/tasks/05-24-github-sync-vocal-data-strategy/research/github-sync-large-data.md", "reason": "Verify GitHub sync and large-data constraints"}
