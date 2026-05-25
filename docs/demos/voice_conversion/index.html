@@ -74,7 +74,7 @@
             margin-top: 4px;
         }
 
-        .meeting-badge {
+        .demo-badge {
             background: rgba(99, 102, 241, 0.1);
             border: 1px solid rgba(99, 102, 241, 0.3);
             border-radius: 100px;
@@ -566,9 +566,9 @@
             <p>Research and Development Comparative Demo Interface</p>
         </div>
         <div class="header-actions">
-            <div class="meeting-badge">
+            <div class="demo-badge">
                 <span class="pulse-dot"></span>
-                Research Demo: Voice Conversion
+                Research Evaluation: Timbre & Articulation
             </div>
             <a href="voice_conversion.zip" class="download-btn" download>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -963,212 +963,482 @@
             </div>
 
             <div class="demo-section-header">
-                <h3>Cross-Lingual Singing Pivot (30-step flow matching)</h3>
-                <p>Translating an English Alto singer's voice to a Japanese Tenor speaker reference. Cross-lingual voice adaptation.</p>
+                <h3>Cross-Lingual Singing Timbre Pivot (Alto 1 ➡️ Japanese Tenor 1)</h3>
+                <p>Translating an English Alto singer's voice to a Japanese Tenor speaker reference. Demonstrating cross-lingual zero-shot timbre pivoting using different speaking vs. singing reference sources.</p>
             </div>
 
             <!-- ROW 4: Cross Lingual Pivot -->
             <div class="vc-row">
                 <div class="row-header">
                     <h4>English Alto 1 ➡️ Japanese Tenor 1</h4>
-                    <span class="pill-badge">Cross-Lingual Pivot</span>
+                    <span class="pill-badge" style="background: rgba(217, 70, 239, 0.1); border-color: rgba(217, 70, 239, 0.2); color: #f472b6;">Cross-Lingual Timbre Pivot</span>
                 </div>
-                <div class="card-row-grid">
-                    
-                    <!-- Card 1 -->
-                    <div class="audio-card">
-                        <div class="card-header">
-                            <span class="card-tag tag-source">Source</span>
-                            <p>Original</p>
-                        </div>
-                        <div class="card-title-area">
-                            <h4>Source Singing</h4>
-                            <p>Original English Alto singing vocals.</p>
-                        </div>
-                        <div class="player-interface">
-                            <div class="custom-player">
-                                <button class="play-btn" onclick="togglePlay('audio-seed-1')">
-                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </button>
-                                <div class="time-slider-container">
-                                    <span class="time-display">0:00</span>
-                                    <input type="range" class="seek-slider" value="0" max="100">
-                                </div>
-                                <div class="equalizer">
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                </div>
+                
+                <!-- References -->
+                <div style="margin-bottom: 30px;">
+                    <h5 style="font-family: var(--font-display); font-size: 1rem; color: var(--text-muted); margin-bottom: 15px; border-left: 3px solid var(--primary); padding-left: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">1. Reference Timbres (Source & Target)</h5>
+                    <div class="card-row-grid">
+                        
+                        <!-- Card 1: Source Singing -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-source">Source</span>
+                                <p>Original</p>
                             </div>
-                            <audio id="audio-seed-1" src="audio/seedvc_cross_source.wav"></audio>
-                        </div>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div class="audio-card">
-                        <div class="card-header">
-                            <span class="card-tag tag-target">Reference</span>
-                            <p>Target</p>
-                        </div>
-                        <div class="card-title-area">
-                            <h4>Target Speech Reference</h4>
-                            <p>Japanese Tenor speaking voice reference.</p>
-                        </div>
-                        <div class="player-interface">
-                            <div class="custom-player">
-                                <button class="play-btn" onclick="togglePlay('audio-seed-2')">
-                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </button>
-                                <div class="time-slider-container">
-                                    <span class="time-display">0:00</span>
-                                    <input type="range" class="seek-slider" value="0" max="100">
-                                </div>
-                                <div class="equalizer">
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                </div>
+                            <div class="card-title-area">
+                                <h4>Source Singing (Alto 1)</h4>
+                                <p>Original English Alto singing vocals (GTSinger).</p>
                             </div>
-                            <audio id="audio-seed-2" src="audio/seedvc_cross_target.wav"></audio>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="audio-card">
-                        <div class="card-header">
-                            <span class="card-tag tag-converted">Converted Pivot</span>
-                            <p>Converted</p>
-                        </div>
-                        <div class="card-title-area">
-                            <h4>Pivoted Singing Output</h4>
-                            <p>English Alto singing converted to Japanese Tenor.</p>
-                        </div>
-                        <div class="player-interface">
-                            <div class="custom-player">
-                                <button class="play-btn" onclick="togglePlay('audio-seed-3')">
-                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </button>
-                                <div class="time-slider-container">
-                                    <span class="time-display">0:00</span>
-                                    <input type="range" class="seek-slider" value="0" max="100">
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-cross-source-singing')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
                                 </div>
-                                <div class="equalizer">
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                </div>
+                                <audio id="audio-seed-cross-source-singing" src="audio/seedvc_cross_source_singing.wav"></audio>
                             </div>
-                            <audio id="audio-seed-3" src="audio/seedvc_cross_out.wav"></audio>
                         </div>
-                    </div>
 
+                        <!-- Card 2: Source Speech -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-source">Source</span>
+                                <p>Original</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Source Speech Reference</h4>
+                                <p>Original English Alto speaking voice reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-cross-source-speech')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-cross-source-speech" src="audio/seedvc_cross_source_speech.wav"></audio>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Target Speech -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-target">Reference</span>
+                                <p>Target</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Target Speech (Talking Timbre)</h4>
+                                <p>Japanese Tenor 1 chatting/talking voice reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-cross-target-speech')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-cross-target-speech" src="audio/seedvc_cross_target_speech.wav"></audio>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Target Singing -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-target">Reference</span>
+                                <p>Target</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Target Singing (Singing Timbre)</h4>
+                                <p>Japanese Tenor 1 singing voice reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-cross-target-singing')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-cross-target-singing" src="audio/seedvc_cross_target_singing.wav"></audio>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Converted Outputs -->
+                <div>
+                    <h5 style="font-family: var(--font-display); font-size: 1rem; color: var(--text-muted); margin-bottom: 15px; border-left: 3px solid var(--accent); padding-left: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">2. Converted Outputs (Timbre Pivoting Comparison)</h5>
+                    <div class="card-row-grid">
+                        
+                        <!-- Card 5: Output A -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-converted" style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); color: #a5b4fc;">Self-Conversion</span>
+                                <p>Self-Conversion</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Pivoted to Source Speech</h4>
+                                <p>Alto 1 singing shifted to Alto 1's speaking voice style.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-cross-out-source-speech')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-cross-out-source-speech" src="audio/seedvc_cross_out_source_speech.wav"></audio>
+                            </div>
+                        </div>
+
+                        <!-- Card 6: Output B -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-converted">Converted Pivot</span>
+                                <p>Cross-Lingual</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Singing in Target's Talking Timbre</h4>
+                                <p>Alto 1 singing converted using Japanese Tenor's speaking reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-cross-out-target-speech')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-cross-out-target-speech" src="audio/seedvc_cross_out_target_speech.wav"></audio>
+                            </div>
+                        </div>
+
+                        <!-- Card 7: Output C -->
+                        <div class="audio-card" style="box-shadow: 0 0 20px rgba(217, 70, 239, 0.15); border-color: rgba(217, 70, 239, 0.25);">
+                            <div class="card-header">
+                                <span class="card-tag tag-converted" style="background: rgba(217, 70, 239, 0.15); border-color: rgba(217, 70, 239, 0.25); color: #f472b6;">Premium Target Singing</span>
+                                <p>Cross-Lingual</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Singing in Target's Singing Timbre</h4>
+                                <p>Alto 1 singing converted using Japanese Tenor's singing reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-cross-out-target-singing')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-cross-out-target-singing" src="audio/seedvc_cross_out_target_singing.wav"></audio>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
             <!-- ROW 5: Same Language Pivot -->
-            <div class="demo-section-header">
-                <h3>Same-Language Timbre Pivot (English Alto 1 ➡️ English Tenor 1)</h3>
-                <p>Timbre conversion within the same language showing the effect of the target speech reference.</p>
+            <div class="demo-section-header" style="margin-top: 50px;">
+                <h3>Same-Language Singing Timbre Pivot (Alto 1 ➡️ English Tenor 1)</h3>
+                <p>Timbre conversion within English speakers showing the difference between guiding the model with a talking/speech reference vs. a highly dynamic singing reference.</p>
             </div>
+            
             <div class="vc-row">
                 <div class="row-header">
                     <h4>English Alto 1 ➡️ English Tenor 1</h4>
-                    <span class="pill-badge">Same-Language Pivot</span>
+                    <span class="pill-badge">Same-Language Timbre Pivot</span>
                 </div>
-                <div class="card-row-grid">
-                    
-                    <!-- Card 4 -->
-                    <div class="audio-card">
-                        <div class="card-header">
-                            <span class="card-tag tag-source">Source</span>
-                            <p>Original</p>
-                        </div>
-                        <div class="card-title-area">
-                            <h4>Source Singing</h4>
-                            <p>Original English Alto singing vocals.</p>
-                        </div>
-                        <div class="player-interface">
-                            <div class="custom-player">
-                                <button class="play-btn" onclick="togglePlay('audio-seed-4')">
-                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </button>
-                                <div class="time-slider-container">
-                                    <span class="time-display">0:00</span>
-                                    <input type="range" class="seek-slider" value="0" max="100">
-                                </div>
-                                <div class="equalizer">
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                </div>
+                
+                <!-- References -->
+                <div style="margin-bottom: 30px;">
+                    <h5 style="font-family: var(--font-display); font-size: 1rem; color: var(--text-muted); margin-bottom: 15px; border-left: 3px solid var(--primary); padding-left: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">1. Reference Timbres (Source & Target)</h5>
+                    <div class="card-row-grid">
+                        
+                        <!-- Card 1: Source Singing -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-source">Source</span>
+                                <p>Original</p>
                             </div>
-                            <audio id="audio-seed-4" src="audio/seedvc_same_source.wav"></audio>
+                            <div class="card-title-area">
+                                <h4>Source Singing (Alto 1)</h4>
+                                <p>Original English Alto singing vocals (GTSinger).</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-same-source-singing')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-same-source-singing" src="audio/seedvc_same_source_singing.wav"></audio>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Card 5 -->
-                    <div class="audio-card">
-                        <div class="card-header">
-                            <span class="card-tag tag-target">Reference</span>
-                            <p>Target</p>
-                        </div>
-                        <div class="card-title-area">
-                            <h4>Target Speech Reference</h4>
-                            <p>English Tenor speaking voice reference.</p>
-                        </div>
-                        <div class="player-interface">
-                            <div class="custom-player">
-                                <button class="play-btn" onclick="togglePlay('audio-seed-5')">
-                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </button>
-                                <div class="time-slider-container">
-                                    <span class="time-display">0:00</span>
-                                    <input type="range" class="seek-slider" value="0" max="100">
-                                </div>
-                                <div class="equalizer">
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                </div>
+                        <!-- Card 2: Source Speech -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-source">Source</span>
+                                <p>Original</p>
                             </div>
-                            <audio id="audio-seed-5" src="audio/seedvc_same_target.wav"></audio>
+                            <div class="card-title-area">
+                                <h4>Source Speech Reference</h4>
+                                <p>Original English Alto speaking voice reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-same-source-speech')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-same-source-speech" src="audio/seedvc_same_source_speech.wav"></audio>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Card 6 -->
-                    <div class="audio-card">
-                        <div class="card-header">
-                            <span class="card-tag tag-converted">Converted Pivot</span>
-                            <p>Converted</p>
-                        </div>
-                        <div class="card-title-area">
-                            <h4>Pivoted Singing Output</h4>
-                            <p>English Alto singing converted to English Tenor.</p>
-                        </div>
-                        <div class="player-interface">
-                            <div class="custom-player">
-                                <button class="play-btn" onclick="togglePlay('audio-seed-6')">
-                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                                </button>
-                                <div class="time-slider-container">
-                                    <span class="time-display">0:00</span>
-                                    <input type="range" class="seek-slider" value="0" max="100">
-                                </div>
-                                <div class="equalizer">
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                    <div class="eq-bar"></div>
-                                </div>
+                        <!-- Card 3: Target Speech -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-target">Reference</span>
+                                <p>Target</p>
                             </div>
-                            <audio id="audio-seed-6" src="audio/seedvc_same_out.wav"></audio>
+                            <div class="card-title-area">
+                                <h4>Target Speech (Talking Timbre)</h4>
+                                <p>English Tenor 1 chatting/talking voice reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-same-target-speech')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-same-target-speech" src="audio/seedvc_same_target_speech.wav"></audio>
+                            </div>
                         </div>
+
+                        <!-- Card 4: Target Singing -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-target">Reference</span>
+                                <p>Target</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Target Singing (Singing Timbre)</h4>
+                                <p>English Tenor 1 singing voice reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-same-target-singing')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-same-target-singing" src="audio/seedvc_same_target_singing.wav"></audio>
+                            </div>
+                        </div>
+
                     </div>
+                </div>
+
+                <!-- Converted Outputs -->
+                <div>
+                    <h5 style="font-family: var(--font-display); font-size: 1rem; color: var(--text-muted); margin-bottom: 15px; border-left: 3px solid var(--accent); padding-left: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">2. Converted Outputs (Timbre Pivoting Comparison)</h5>
+                    <div class="card-row-grid">
+                        
+                        <!-- Card 5: Output A -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-converted" style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.2); color: #a5b4fc;">Self-Conversion</span>
+                                <p>Self-Conversion</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Pivoted to Source Speech</h4>
+                                <p>Alto 1 singing shifted to Alto 1's speaking voice style.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-same-out-source-speech')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-same-out-source-speech" src="audio/seedvc_same_out_source_speech.wav"></audio>
+                            </div>
+                        </div>
+
+                        <!-- Card 6: Output B -->
+                        <div class="audio-card">
+                            <div class="card-header">
+                                <span class="card-tag tag-converted">Converted Pivot</span>
+                                <p>Same-Language</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Singing in Target's Talking Timbre</h4>
+                                <p>Alto 1 singing converted using English Tenor's speaking reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-same-out-target-speech')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-same-out-target-speech" src="audio/seedvc_same_out_target_speech.wav"></audio>
+                            </div>
+                        </div>
+
+                        <!-- Card 7: Output C -->
+                        <div class="audio-card" style="box-shadow: 0 0 20px rgba(20, 184, 166, 0.15); border-color: rgba(20, 184, 166, 0.25);">
+                            <div class="card-header">
+                                <span class="card-tag tag-converted" style="background: rgba(20, 184, 166, 0.15); border-color: rgba(20, 184, 166, 0.25); color: #2dd4bf;">Premium Target Singing</span>
+                                <p>Same-Language</p>
+                            </div>
+                            <div class="card-title-area">
+                                <h4>Singing in Target's Singing Timbre</h4>
+                                <p>Alto 1 singing converted using English Tenor's singing reference.</p>
+                            </div>
+                            <div class="player-interface">
+                                <div class="custom-player">
+                                    <button class="play-btn" onclick="togglePlay('audio-seed-same-out-target-singing')">
+                                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    </button>
+                                    <div class="time-slider-container">
+                                        <span class="time-display">0:00</span>
+                                        <input type="range" class="seek-slider" value="0" max="100">
+                                    </div>
+                                    <div class="equalizer">
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                        <div class="eq-bar"></div>
+                                    </div>
+                                </div>
+                                <audio id="audio-seed-same-out-target-singing" src="audio/seedvc_same_out_target_singing.wav"></audio>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
                 </div>
             </div>
