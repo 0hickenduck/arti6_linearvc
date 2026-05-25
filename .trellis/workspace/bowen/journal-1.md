@@ -537,3 +537,37 @@ Completed VTuber Dataset Curation V3 with dry vocal stems and verified solo chat
 ### Next Steps
 
 - None - task complete
+
+
+## Session 17: Upgrade Timbre Pivoting to Multi-Dimensional Reference Comparison
+
+**Date**: 2026-05-25
+**Task**: Upgrade Timbre Pivoting to Multi-Dimensional Reference Comparison
+**Package**: vtuber_pipeline
+**Branch**: `master`
+
+### Summary
+
+Redesigned the Seed-VC Timbre Pivoting UI section to showcase a comprehensive comparative grid. It now compares 7 audio signals per case (Alto 1 to Japanese/English Tenor 1) across Source Singing/Speech, Target Speech/Singing references, and outputs pivoted to Source Speech, Target Speech, and Target Singing timbres. Completely removed all meeting/one-on-one terminology in favor of clean academic/R&D naming.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7286ecd` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
