@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+"""
+VTuber Data Agent Orchestrator
+
+This script serves as the primary entry point for the automated VTuber data pipeline.
+It orchestrates a multi-step data engineering process:
+1. Discovery: Analyzes a YouTube channel using Gemini to isolate Speech vs Singing content.
+2. Download: Fetches raw audio tracks using yt-dlp.
+3. Purify & Segment: Uses Demucs to strip background music and Silero VAD to segment 
+   audio into pristine, phonetic chunks suitable for voice conversion ML training.
+4. Archive & Upload: (Optional) Packages the dataset and SCPs it to a remote training server.
+
+Usage:
+    python local_agent.py "https://www.youtube.com/@Channel" --max-videos 20
+"""
+
 import argparse
 import logging
 import os
