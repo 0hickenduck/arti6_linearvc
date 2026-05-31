@@ -571,3 +571,35 @@ Redesigned the Seed-VC Timbre Pivoting UI section to showcase a comprehensive co
 ### Next Steps
 
 - None - task complete
+
+
+## Session 18: Literature Survey for Domain and Skill Shifters
+
+**Date**: 2026-05-31
+**Task**: Literature Survey for Domain and Skill Shifters
+**Package**: vtuber_pipeline
+**Branch**: `master`
+
+### Summary
+
+Conducted a literature review on voice/singing conversion using adapters on frozen SSL models. Explored papers like AdaptVC, CONTUNER, and AdaDenoiser. Performed a deep dive into the methodology, module design, datasets, and evaluation metrics of AdaptVC to help brainstorm master's thesis directions.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
