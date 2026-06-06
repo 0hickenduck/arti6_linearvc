@@ -11,6 +11,7 @@ Read these before changing the harness:
 
 - `.trellis/spec/repo-structure.md`
 - `.trellis/spec/guides/trellis-system-overview_CN.md`
+- `.trellis/spec/research-system.md`
 - `.agents/skills/trellis-meta/SKILL.md`
 
 ## Local Rules

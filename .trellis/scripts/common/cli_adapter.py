@@ -364,8 +364,17 @@ class CLIAdapter:
         elif self.platform == "kiro":
             cmd = ["kiro", "run", prompt]
         elif self.platform == "gemini":
-            cmd = ["gemini"]
-            cmd.append(prompt)
+            cmd = ["gemini", "--skip-trust"]
+            cmd.extend(
+                [
+                    "--approval-mode",
+                    "yolo" if skip_permissions else "default",
+                    "--output-format",
+                    "json" if json_output else "text",
+                    "-p",
+                    prompt,
+                ]
+            )
         elif self.platform == "antigravity":
             cmd = ["agy", "--print"]
             if session_id:

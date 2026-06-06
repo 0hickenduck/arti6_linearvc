@@ -321,6 +321,48 @@ def build_breadcrumb(
     return f"<workflow-state>\n{header}\n{body}\n</workflow-state>"
 
 
+def build_research_system_hint(root: Path, input_data: dict) -> str:
+    """Emit a compact hint when task-local research artifacts exist.
+
+    The research workflow deliberately keeps detailed survey/evolution state in
+    files. The hook only points agents at those files when they are present.
+    """
+    active = _resolve_active_task(root, input_data)
+    if not active.task_path or active.stale:
+        return ""
+
+    task_dir = Path(active.task_path)
+    if not task_dir.is_absolute():
+        task_dir = root / task_dir
+    if not task_dir.is_dir():
+        return ""
+
+    rel_paths: list[str] = []
+    candidates = [
+        task_dir / "survey" / "reports" / "survey.md",
+        task_dir / "evolution.md",
+        task_dir / "research-state.md",
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            rel_paths.append(str(candidate.relative_to(root)))
+    if (task_dir / "survey" / "papers").is_dir():
+        rel_paths.append(str((task_dir / "survey" / "papers").relative_to(root)))
+    if not rel_paths:
+        return ""
+
+    lines = [
+        "<research-system>",
+        "Task-local research artifacts exist; read them before survey, idea, benchmark, or experiment-design work:",
+    ]
+    lines.extend(f"- `{path}`" for path in rel_paths)
+    lines.append(
+        "Record operational problems with `python3 ./.trellis/scripts/research_survey.py record-problem ...` so finish-work can carry them into the evolution backlog."
+    )
+    lines.append("</research-system>")
+    return "\n".join(lines)
+
+
 # ---------------------------------------------------------------------------
 # Entry
 # ---------------------------------------------------------------------------
@@ -365,6 +407,10 @@ def main() -> int:
         parts.append(_codex_mode_banner(config))
         parts.append(breadcrumb)
         breadcrumb = "\n\n".join(parts)
+
+    research_hint = build_research_system_hint(root, data)
+    if research_hint:
+        breadcrumb = f"{breadcrumb}\n\n{research_hint}"
 
     # Gemini CLI 0.40.x rejects "UserPromptSubmit" — its per-turn event is
     # named "BeforeAgent". Other platforms (Claude/Cursor/Qoder/CodeBuddy/
