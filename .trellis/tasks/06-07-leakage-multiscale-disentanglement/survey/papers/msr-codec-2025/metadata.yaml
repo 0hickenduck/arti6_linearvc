@@ -1,0 +1,8 @@
+title: "MSR-Codec: A Low-Bitrate Multi-Stream Residual Codec for High-Fidelity Speech Generation with Information Disentanglement"
+year: 2025
+venue: "arXiv 2025, revised 2026"
+paper_url: "https://arxiv.org/abs/2509.13068"
+code_url: "https://github.com/herbertLJY/MSRCodec"
+benchmark_role: "possible pivot/baseline after local install verification"
+code_status: "public inference code and pretrained models claimed; verify locally before treating as benchmark"
+

@@ -1,0 +1,9 @@
+title: "One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization"
+year: 2019
+venue: "Interspeech 2019"
+paper_url: "https://arxiv.org/abs/1904.05742"
+source_url: "https://www.isca-archive.org/interspeech_2019/chou19_interspeech.html"
+code_url: null
+benchmark_role: "related-work evidence"
+code_status: "survey/reference only; no maintained official implementation selected"
+

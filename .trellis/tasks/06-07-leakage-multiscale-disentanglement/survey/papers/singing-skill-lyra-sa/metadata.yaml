@@ -1,0 +1,9 @@
+id: singing-skill-lyra-sa
+title: Lyra-SA Singing Assessment Dataset
+year: 2021-2023
+benchmark_role: possible pivot/baseline
+code_gate: data access by application; code not verified
+sources:
+  - https://lyracobar.y.qq.com/singvoicedataset_en.html
+  - https://lyracobar.y.qq.com/index_en.html
+  - https://archives.ismir.net/ismir2021/paper/000103.pdf

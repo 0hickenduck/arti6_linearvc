@@ -161,10 +161,13 @@ def _detect_platform(input_data: dict) -> str | None:
         "QODER_PROJECT_DIR": "qoder",
         "KIRO_PROJECT_DIR": "kiro",
         "COPILOT_PROJECT_DIR": "copilot",
+        "ANTIGRAVITY_PROJECT_DIR": "antigravity",
     }
     for env_name, platform in env_map.items():
         if os.environ.get(env_name):
             return platform
+    if "--antigravity" in sys.argv:
+        return "antigravity"
     script_parts = set(Path(sys.argv[0]).parts)
     if ".claude" in script_parts:
         return "claude"
@@ -645,6 +648,8 @@ def main():
     except (json.JSONDecodeError, ValueError):
         hook_input = {}
 
+    platform = _detect_platform(hook_input)
+
     # Try platform-specific env vars, hook cwd, fallback to cwd
     project_dir_env_vars = [
         "CLAUDE_PROJECT_DIR",
@@ -655,6 +660,7 @@ def main():
         "GEMINI_PROJECT_DIR",
         "KIRO_PROJECT_DIR",
         "COPILOT_PROJECT_DIR",
+        "ANTIGRAVITY_PROJECT_DIR",
     ]
     project_dir = None
     for var in project_dir_env_vars:
@@ -778,12 +784,21 @@ When the user sends the first message, follow <task-status> and the workflow gui
 If a task is READY, execute its Next required action without asking whether to continue.
 </ready>""")
 
-    result = {
-        "hookSpecificOutput": {
-            "hookEventName": "SessionStart",
-            "additionalContext": output.getvalue(),
+    context_text = output.getvalue()
+    if platform == "antigravity":
+        result = {
+            "systemMessage": context_text,
         }
-    }
+    else:
+        result = {
+            # Claude Code / Qoder / CodeBuddy / Droid / Gemini / Copilot format
+            "hookSpecificOutput": {
+                "hookEventName": "SessionStart",
+                "additionalContext": context_text,
+            },
+            # Cursor sessionStart format (top-level snake_case per Cursor docs)
+            "additional_context": context_text,
+        }
 
     # Output JSON - stdout is already configured for UTF-8
     print(json.dumps(result, ensure_ascii=False), flush=True)

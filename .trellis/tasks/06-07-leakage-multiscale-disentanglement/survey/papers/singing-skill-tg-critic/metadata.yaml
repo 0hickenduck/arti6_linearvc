@@ -1,0 +1,8 @@
+id: singing-skill-tg-critic
+title: TG-Critic
+year: 2023
+benchmark_role: related-work evidence
+code_gate: partial labels/results; survey/reference by default
+sources:
+  - https://arxiv.org/abs/2305.09127
+  - https://github.com/YuejieGao/TG-CRITIC

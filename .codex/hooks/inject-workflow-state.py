@@ -133,6 +133,7 @@ def _detect_platform(input_data: dict) -> str | None:
         "QODER_PROJECT_DIR": "qoder",
         "KIRO_PROJECT_DIR": "kiro",
         "COPILOT_PROJECT_DIR": "copilot",
+        "ANTIGRAVITY_PROJECT_DIR": "antigravity",
     }
     for env_name, platform in env_map.items():
         if os.environ.get(env_name):
@@ -413,18 +414,30 @@ def main() -> int:
         breadcrumb = f"{breadcrumb}\n\n{research_hint}"
 
     # Gemini CLI 0.40.x rejects "UserPromptSubmit" — its per-turn event is
-    # named "BeforeAgent". Other platforms (Claude/Cursor/Qoder/CodeBuddy/
-    # Droid/Codex/Copilot) accept the original Claude-style name.
-    hook_event_name = (
-        "BeforeAgent" if platform == "gemini" else "UserPromptSubmit"
-    )
+    # named "BeforeAgent". Antigravity uses "PreInvocation". Other platforms
+    # accept the original Claude-style name.
+    in_event = data.get("hookEventName")
+    if in_event:
+        hook_event_name = in_event
+    elif platform == "gemini":
+        hook_event_name = "BeforeAgent"
+    elif platform == "antigravity":
+        hook_event_name = "PreInvocation"
+    else:
+        hook_event_name = "UserPromptSubmit"
 
-    output = {
-        "hookSpecificOutput": {
-            "hookEventName": hook_event_name,
-            "additionalContext": breadcrumb,
+    if platform == "antigravity":
+        output = {
+            "systemMessage": breadcrumb,
         }
-    }
+    else:
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": hook_event_name,
+                "additionalContext": breadcrumb,
+            }
+        }
+
     print(json.dumps(output))
     return 0
 

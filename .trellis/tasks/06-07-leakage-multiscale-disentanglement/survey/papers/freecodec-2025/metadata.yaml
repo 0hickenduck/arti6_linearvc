@@ -1,0 +1,8 @@
+title: "FreeCodec: A Disentangled Neural Speech Codec with Fewer Tokens"
+year: 2025
+venue: "Interspeech 2025"
+paper_url: "https://arxiv.org/abs/2412.01053"
+code_url: "https://github.com/exercise-book-yq/FreeCodec"
+benchmark_role: "related-work evidence; possible future baseline only if code appears"
+code_status: "repo exists but no usable code/checkpoints found as of 2026-06-08"
+

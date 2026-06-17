@@ -1,0 +1,9 @@
+title: "NaturalSpeech 3: Zero-Shot Speech Synthesis with Factorized Codec and Diffusion Models"
+year: 2024
+venue: "ICML 2024 / arXiv"
+paper_url: "https://arxiv.org/abs/2403.03100"
+code_url: "https://github.com/lifeiteng/naturalspeech3_facodec"
+alternate_code_url: "https://github.com/Plachtaa/FAcodec"
+benchmark_role: "experiment-critical baseline candidate"
+code_status: "usable FACodec inference/pretrained code available; verify install locally before benchmark"
+

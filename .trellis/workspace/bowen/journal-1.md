@@ -700,3 +700,36 @@ Completed and archived the research-system architecture task: added the file-bac
 ### Next Steps
 
 - None - task complete
+
+
+## Session 21: Literature Review: Phonological Analogies & Voice Conversion
+
+**Date**: 2026-06-16
+**Task**: Literature Review: Phonological Analogies & Voice Conversion
+**Package**: vtuber_pipeline
+**Branch**: `codex/research-system-architecture`
+
+### Summary
+
+Reviewed phonological vectors, architectural shifts in SVC, and ML concepts.
+
+### Main Changes
+
+Discussed phonological vector arithmetic (b:p=d:t), the shift from phone-level to frame-level processing in modern voice conversion, the necessity of information bottlenecks, and the distinction between KNN and K-Means. Created multiple Free Recall notes to consolidate this theoretical understanding.
+
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

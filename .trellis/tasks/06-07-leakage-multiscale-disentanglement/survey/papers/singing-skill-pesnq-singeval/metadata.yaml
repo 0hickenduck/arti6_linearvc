@@ -1,0 +1,11 @@
+id: singing-skill-pesnq-singeval
+title: PESnQ, SingEval, and Explainable Singing Quality Assessment
+year: 2017-2021
+benchmark_role: possible pivot/baseline
+code_gate: usable code with data-access caveats
+sources:
+  - https://github.com/chitralekha18/PESnQ_APSIPA2017
+  - https://github.com/chitralekha18/SingEval
+  - https://www.apsipa.org/proceedings/2021/pdfs/0000904.pdf
+  - https://github.com/AME430/Towards-Training-Explainable-Singing-Quality-Assessment-Network-with-Augmented-Data
+  - https://github.com/AME430/TOWARDS-REFERENCE-INDEPENDENT-RHYTHM-ASSESSMENT-OF-SOLO-SINGING

@@ -1,0 +1,20 @@
+{
+  "trellis-session-start": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "python3 ../.gemini/hooks/session-start.py --antigravity",
+        "timeout": 30000
+      }
+    ]
+  },
+  "trellis-workflow-inject": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python3 ../.gemini/hooks/inject-workflow-state.py --antigravity",
+        "timeout": 15000
+      }
+    ]
+  }
+}

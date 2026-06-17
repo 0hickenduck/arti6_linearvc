@@ -1,0 +1,11 @@
+id: singing-skill-singmd-vocalverse
+title: Sing-MD / VocalVerse / QwenFeat-Vocal-Score
+year: 2025-2026
+benchmark_role: possible pivot/baseline
+code_gate: usable but heavy; not a small-GPU first baseline
+sources:
+  - https://arxiv.org/abs/2512.06999
+  - https://doi.org/10.1145/3746027.3758148
+  - https://github.com/CarlWangChina/QwenFeat-Vocal-Score
+  - https://huggingface.co/karl-wang/QwenFeat-Vocal-Score
+  - https://huggingface.co/datasets/karl-wang/VocalVerse-dataset/
