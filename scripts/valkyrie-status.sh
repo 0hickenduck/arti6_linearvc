@@ -124,9 +124,15 @@ else
 fi
 
 for host in "${hosts[@]}"; do
-  output=$(
-    timeout "$REMOTE_TIMEOUT" ssh "${ssh_opts[@]}" "$host" "SHOW_NIC=$SHOW_NIC; export SHOW_NIC; $remote_script" 2>&1
-  )
+  if command -v timeout >/dev/null 2>&1; then
+    output=$(
+      timeout "$REMOTE_TIMEOUT" ssh "${ssh_opts[@]}" "$host" "SHOW_NIC=$SHOW_NIC; export SHOW_NIC; $remote_script" 2>&1
+    )
+  else
+    output=$(
+      ssh "${ssh_opts[@]}" "$host" "SHOW_NIC=$SHOW_NIC; export SHOW_NIC; $remote_script" 2>&1
+    )
+  fi
   status=$?
   if [[ "$SHOW_NIC" -eq 1 ]]; then
     line=$(printf '%s\n' "$output" | awk -F '\t' 'NF >= 8 { last=$0 } END { print last }')
