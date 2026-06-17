@@ -1,0 +1,11 @@
+{
+  "trellis-test": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python3 test_hook.py",
+        "timeout": 15000
+      }
+    ]
+  }
+}

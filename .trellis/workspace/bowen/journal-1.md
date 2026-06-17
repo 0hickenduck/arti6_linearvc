@@ -603,3 +603,133 @@ Conducted a literature review on voice/singing conversion using adapters on froz
 ### Next Steps
 
 - None - task complete
+
+
+## Session 19: Research system architecture harness design
+
+**Date**: 2026-06-01
+**Task**: Research system architecture harness design
+**Package**: vtuber_pipeline
+**Branch**: `master`
+
+### Summary
+
+Designed and implemented the first research-system harness layer: survey evidence store, survey delegation support, evolution notes, workflow routing, hooks, skills, and agents. Session-only record; task remains in progress.
+
+### Main Changes
+
+### Work Completed
+
+- Designed the research system around automating engineering while preserving human judgment for idea/theme decisions.
+- Added survey evidence-store conventions: human-readable survey plus per-paper source/code/extraction artifacts.
+- Added research-system contract under `.trellis/spec/research-system.md`.
+- Added `.trellis/scripts/research_survey.py` for survey initialization, per-paper templates, Gemini/Antigravity/local delegation, and evolution-note recording.
+- Added `trellis-research-survey` skills for shared `.agents/skills/` and Antigravity `.agent/skills/`.
+- Added `trellis-survey` agent definitions for Codex and Gemini.
+- Updated workflow/start/finish-work entries to route survey work and record evolution notes.
+- Updated Codex/Gemini hooks to surface task-local survey/evolution artifacts when they exist.
+- Fixed Gemini CLI headless command shape in `CLIAdapter` and fixed the local Gemini delegate shell parse issue.
+- Updated finish-work semantics after user clarification: session-only journal creation is allowed without archiving or clean working tree.
+
+### Validation
+
+- `python3 -m py_compile .trellis/scripts/research_survey.py .trellis/scripts/common/cli_adapter.py .codex/hooks/inject-workflow-state.py .gemini/hooks/inject-workflow-state.py`
+- `bash -n .trellis/scripts/delegate_to_gemini.sh`
+- JSON validation for `.gemini/settings.json` and `.codex/hooks.json`
+- Codex/Gemini hook smoke tests confirmed research-system hints appear when task-local artifacts exist.
+- CLI adapter assertions confirmed Gemini uses headless `-p` and Antigravity uses `agy --print`.
+- `research_survey.py delegate --backend local` produced the expected survey prompt.
+
+### Evolution Notes
+
+- Recorded Gemini delegation path unavailable.
+- Recorded and resolved project Gemini delegate shell parse failure.
+- Clarified finish-work needs a session-only mode so in-progress research work can be journaled without archive/commit gates.
+
+### Status
+
+Task remains `in_progress`. Research contract schema and experiment gate schema are still future work.
+
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 20: Research survey and singing-skill direction
+
+**Date**: 2026-06-07
+**Task**: Research survey and singing-skill direction
+**Package**: vtuber_pipeline
+**Branch**: `codex/research-system-architecture`
+
+### Summary
+
+Completed and archived the research-system architecture task: added the file-backed survey/evolution harness, multi-platform routing and hooks, fixed bounded delegated-report filenames, and captured the transition-skill singing research direction. Validation passed; unrelated working-tree changes were left untouched.
+
+### Main Changes
+
+(Add details)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b49e79b` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+
+## Session 21: Literature Review: Phonological Analogies & Voice Conversion
+
+**Date**: 2026-06-16
+**Task**: Literature Review: Phonological Analogies & Voice Conversion
+**Package**: vtuber_pipeline
+**Branch**: `codex/research-system-architecture`
+
+### Summary
+
+Reviewed phonological vectors, architectural shifts in SVC, and ML concepts.
+
+### Main Changes
+
+Discussed phonological vector arithmetic (b:p=d:t), the shift from phone-level to frame-level processing in modern voice conversion, the necessity of information bottlenecks, and the distinction between KNN and K-Means. Created multiple Free Recall notes to consolidate this theoretical understanding.
+
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

@@ -133,10 +133,13 @@ def _detect_platform(input_data: dict) -> str | None:
         "QODER_PROJECT_DIR": "qoder",
         "KIRO_PROJECT_DIR": "kiro",
         "COPILOT_PROJECT_DIR": "copilot",
+        "ANTIGRAVITY_PROJECT_DIR": "antigravity",
     }
     for env_name, platform in env_map.items():
         if os.environ.get(env_name):
             return platform
+    if "--antigravity" in sys.argv:
+        return "antigravity"
     script_parts = set(Path(sys.argv[0]).parts)
     if ".claude" in script_parts:
         return "claude"
@@ -321,6 +324,48 @@ def build_breadcrumb(
     return f"<workflow-state>\n{header}\n{body}\n</workflow-state>"
 
 
+def build_research_system_hint(root: Path, input_data: dict) -> str:
+    """Emit a compact hint when task-local research artifacts exist.
+
+    The research workflow deliberately keeps detailed survey/evolution state in
+    files. The hook only points agents at those files when they are present.
+    """
+    active = _resolve_active_task(root, input_data)
+    if not active.task_path or active.stale:
+        return ""
+
+    task_dir = Path(active.task_path)
+    if not task_dir.is_absolute():
+        task_dir = root / task_dir
+    if not task_dir.is_dir():
+        return ""
+
+    rel_paths: list[str] = []
+    candidates = [
+        task_dir / "survey" / "reports" / "survey.md",
+        task_dir / "evolution.md",
+        task_dir / "research-state.md",
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            rel_paths.append(str(candidate.relative_to(root)))
+    if (task_dir / "survey" / "papers").is_dir():
+        rel_paths.append(str((task_dir / "survey" / "papers").relative_to(root)))
+    if not rel_paths:
+        return ""
+
+    lines = [
+        "<research-system>",
+        "Task-local research artifacts exist; read them before survey, idea, benchmark, or experiment-design work:",
+    ]
+    lines.extend(f"- `{path}`" for path in rel_paths)
+    lines.append(
+        "Record operational problems with `python3 ./.trellis/scripts/research_survey.py record-problem ...` so finish-work can carry them into the evolution backlog."
+    )
+    lines.append("</research-system>")
+    return "\n".join(lines)
+
+
 # ---------------------------------------------------------------------------
 # Entry
 # ---------------------------------------------------------------------------
@@ -366,19 +411,35 @@ def main() -> int:
         parts.append(breadcrumb)
         breadcrumb = "\n\n".join(parts)
 
-    # Gemini CLI 0.40.x rejects "UserPromptSubmit" — its per-turn event is
-    # named "BeforeAgent". Other platforms (Claude/Cursor/Qoder/CodeBuddy/
-    # Droid/Codex/Copilot) accept the original Claude-style name.
-    hook_event_name = (
-        "BeforeAgent" if platform == "gemini" else "UserPromptSubmit"
-    )
+    research_hint = build_research_system_hint(root, data)
+    if research_hint:
+        breadcrumb = f"{breadcrumb}\n\n{research_hint}"
 
-    output = {
-        "hookSpecificOutput": {
-            "hookEventName": hook_event_name,
-            "additionalContext": breadcrumb,
+    # Gemini CLI 0.40.x rejects "UserPromptSubmit" — its per-turn event is
+    # named "BeforeAgent". Antigravity uses "PreInvocation". Other platforms
+    # accept the original Claude-style name.
+    in_event = data.get("hookEventName")
+    if in_event:
+        hook_event_name = in_event
+    elif platform == "gemini":
+        hook_event_name = "BeforeAgent"
+    elif platform == "antigravity":
+        hook_event_name = "PreInvocation"
+    else:
+        hook_event_name = "UserPromptSubmit"
+
+    if platform == "antigravity":
+        output = {
+            "systemMessage": breadcrumb,
         }
-    }
+    else:
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": hook_event_name,
+                "additionalContext": breadcrumb,
+            }
+        }
+
     print(json.dumps(output))
     return 0
 

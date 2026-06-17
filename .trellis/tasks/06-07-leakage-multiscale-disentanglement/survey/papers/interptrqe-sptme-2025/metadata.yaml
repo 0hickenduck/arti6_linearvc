@@ -1,0 +1,8 @@
+title: "Speaker Disentanglement of Speech Pre-trained Model Based on Interpretability"
+year: 2025
+venue: "arXiv, revised 2026"
+paper_url: "https://arxiv.org/abs/2507.17851"
+code_url: "https://github.com/zhuxiaoxuhit/InterpTRQE-SptME"
+benchmark_role: "related-work evidence; possible diagnostic comparator"
+code_status: "paper claims code/scripts; not cloned or executed in this survey"
+

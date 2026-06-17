@@ -1,0 +1,11 @@
+id: singing-skill-singmos-pro
+title: SingMOS and SingMOS-Pro
+year: 2024-2026
+benchmark_role: experiment-critical reference
+code_gate: usable baseline candidate
+sources:
+  - https://arxiv.org/abs/2406.10911
+  - https://arxiv.org/abs/2510.01812
+  - https://huggingface.co/datasets/TangRain/SingMOS-Pro
+  - https://huggingface.co/datasets/TangRain/SingMOS-v1
+  - https://github.com/South-Twilight/SingMOS

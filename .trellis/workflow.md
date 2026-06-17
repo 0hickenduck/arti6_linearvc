@@ -9,6 +9,7 @@
 3. **Persist everything** — research, decisions, and lessons all go to files; conversations get compacted, files don't
 4. **Incremental development** — one task at a time
 5. **Capture learnings** — after each task, review and write new knowledge back to spec
+6. **Automate engineering, preserve judgment** — research survey, experiment bookkeeping, and monitoring can be automated; theme/idea/novelty decisions remain explicit human checkpoints
 
 ---
 
@@ -142,9 +143,9 @@ python3 ./.trellis/scripts/get_context.py --mode phase --step <X.Y>  # detailed 
 ## Phase Index
 
 ```
-Phase 1: Plan    → figure out what to do (brainstorm + research → prd.md)
+Phase 1: Plan    → figure out what to do (brainstorm + research/survey → prd.md)
 Phase 2: Execute → write code and pass quality checks
-Phase 3: Finish  → distill lessons + wrap-up
+Phase 3: Finish  → distill lessons + evolution notes + wrap-up
 ```
 
 <!-- Per-turn breadcrumb: shown when there is no active task (before Phase 1) -->
@@ -195,7 +196,8 @@ Then run `task.py start <task-dir>` to flip status to in_progress.
      commit, including Phase 3.3 spec update and Phase 3.4 commit. -->
 
 [workflow-state:in_progress]
-**Flow**: trellis-implement → trellis-check → trellis-update-spec → commit (Phase 3.4) → `/trellis:finish-work`.
+**Tools**: `trellis-implement` / `trellis-research` are sub-agent types only (Task/Agent tool, NOT Skill — there is no skill by these names). `trellis-update-spec` is a skill. `trellis-check` exists as both; prefer the Agent form when verifying after code changes.
+**Flow**: trellis-implement → trellis-check → trellis-update-spec → commit (Phase 3.4) → record evolution notes if any → `/trellis:finish-work`.
 **Main-session default (no override)**: dispatch the `trellis-implement` / `trellis-check` sub-agents — the main agent does NOT edit code by default. Phase 3.4 commit (required, once): after trellis-update-spec, or whenever implementation is verifiably complete, the main agent **drives the commit** — state the commit plan in user-facing text, then run `git commit` — BEFORE suggesting `/trellis:finish-work`. `/finish-work` refuses to run on a dirty working tree (paths outside `.trellis/workspace/` and `.trellis/tasks/`).
 **Sub-agent self-exemption**: if you are already running as `trellis-implement`, implement directly from the loaded task context and do NOT spawn another `trellis-implement`; if you are already running as `trellis-check`, review/fix directly and do NOT spawn another `trellis-check`. The default dispatch rule applies to the main session only.
 **Sub-agent dispatch protocol (all platforms, all sub-agents)**: When you spawn `trellis-implement` / `trellis-check` / `trellis-research`, your dispatch prompt **MUST** start with one line: `Active task: <task path from \`task.py current\`>`. No exceptions. On class-2 platforms (codex / copilot / gemini / qoder) the sub-agent depends on this line because there is no hook to inject task context. On class-1 platforms (claude / cursor / opencode / kiro / codebuddy / droid) the line is normally redundant — the hook injects context directly — but it serves as a critical fallback when the hook fails (Windows + Claude Code PreToolUse silent skip, `--continue` resume, fork distribution, hooks disabled, etc.). For `trellis-research`, the line tells the sub-agent which `{task_dir}/research/` to write into.
@@ -208,7 +210,7 @@ Then run `task.py start <task-dir>` to flip status to in_progress.
      instead of dispatching sub-agents. -->
 
 [workflow-state:in_progress-inline]
-**Flow** (inline mode): main session loads `trellis-before-dev` → main session edits code → main session loads `trellis-check` → run lint / type-check / tests → fix → `trellis-update-spec` → commit (Phase 3.4) → `/trellis:finish-work`.
+**Flow** (inline mode): main session loads `trellis-before-dev` → main session edits code → main session loads `trellis-check` → run lint / type-check / tests → fix → `trellis-update-spec` → commit (Phase 3.4) → record evolution notes if any → `/trellis:finish-work`.
 **Main-session default (inline dispatch_mode)**: the main agent edits code directly. Do NOT dispatch `trellis-implement` / `trellis-check` sub-agents. Load the `trellis-before-dev` skill before writing code; load the `trellis-check` skill before reporting completion.
 Phase 3.4 commit (required, once): after `trellis-update-spec`, or whenever implementation is verifiably complete, the main agent **drives the commit** — state the commit plan in user-facing text, then run `git commit` — BEFORE suggesting `/trellis:finish-work`. `/finish-work` refuses to run on a dirty working tree (paths outside `.trellis/workspace/` and `.trellis/tasks/`).
 [/workflow-state:in_progress-inline]
@@ -229,7 +231,7 @@ Phase 3.4 commit (required, once): after `trellis-update-spec`, or whenever impl
      channel as the live blocks. -->
 
 [workflow-state:completed]
-Code committed via Phase 3.4; run `/trellis:finish-work` to wrap up (archive the task + record session).
+Code committed via Phase 3.4; record evolution notes if any, then run `/trellis:finish-work` to wrap up (archive the task + record session).
 If you reach this state with uncommitted code, return to Phase 3.4 first — `/finish-work` refuses to run on a dirty working tree.
 `task.py archive` deletes any runtime session files that still point at the archived task.
 [/workflow-state:completed]
@@ -250,6 +252,7 @@ When a user request matches one of these intents, load the corresponding skill (
 | User intent | Route |
 |---|---|
 | Wants a new feature / requirement unclear | `trellis-brainstorm` |
+| Literature survey / paper extraction / benchmark candidate survey | `trellis-research-survey` |
 | About to write code / start implementing | Dispatch the `trellis-implement` sub-agent per Phase 2.1 |
 | Finished writing / want to verify | Dispatch the `trellis-check` sub-agent per Phase 2.2 |
 | Stuck / fixed same bug several times | `trellis-break-loop` |
@@ -264,6 +267,7 @@ When a user request matches one of these intents, load the corresponding skill (
 | User intent | Skill |
 |---|---|
 | Wants a new feature / requirement unclear | `trellis-brainstorm` |
+| Literature survey / paper extraction / benchmark candidate survey | `trellis-research-survey` |
 | About to write code / start implementing | `trellis-before-dev` (then implement directly in the main session) |
 | Finished writing / want to verify | `trellis-check` |
 | Stuck / fixed same bug several times | `trellis-break-loop` |
@@ -342,6 +346,8 @@ Return to this step whenever requirements change and revise `prd.md`.
 
 Research can happen at any time during requirement exploration. It isn't limited to local code — you can use any available tool (MCP servers, skills, web search, etc.) to look up external information, including third-party library docs, industry practices, API references, etc.
 
+For deep-learning paper survey, benchmark candidate search, or paper-method extraction, load the `trellis-research-survey` skill. That skill creates `{TASK_DIR}/survey/`, preserves per-paper idea/method/experiment/code evidence, and can delegate broad survey scouting to Gemini or Antigravity when those CLIs are available.
+
 [Claude Code, Cursor, OpenCode, codex-sub-agent, Kiro, Gemini, Qoder, CodeBuddy, Copilot, Droid, Pi]
 
 Spawn the research sub-agent:
@@ -366,6 +372,8 @@ Do the research in the main session directly and write findings into `{TASK_DIR}
 Brainstorm and research can interleave freely — pause to research a technical question, then return to talk with the user.
 
 **Key principle**: Research output must be written to files, not left only in the chat. Conversations get compacted; files don't.
+
+**Research-system principle**: The human-readable survey is selective and decision-oriented. Detailed paper extraction belongs in `{TASK_DIR}/survey/papers/<paper-id>/`; experiment-specific references belong in `{TASK_DIR}/survey/shortlists/`.
 
 #### 1.3 Configure context `[required · once]`
 
@@ -625,7 +633,20 @@ The AI drives a batched commit of this task's code changes so `/finish-work` can
 
 #### 3.5 Wrap-up reminder
 
-After the above, remind the user they can run `/finish-work` to wrap up (archive the task, record the session).
+After the above, review whether this session exposed operational problems worth evolving later (agent CLI failures, internet/proxy/download issues, source extraction failures, benchmark reproduction failures, GPU/CPU/NaN/stall issues, or bad handoff context). If yes, record them with:
+
+```bash
+python3 ./.trellis/scripts/research_survey.py record-problem \
+  --title "<short problem>" \
+  --context "<what we were trying>" \
+  --command "<command/backend>" \
+  --evidence "<stderr/stdout summary>" \
+  --next "<next diagnostic>"
+```
+
+Then remind the user they can run `/finish-work` to wrap up. If they only want
+to create a session/journal record for in-progress work, use session-only mode:
+`add_session.py --stdin --no-commit --commit "-"` and do not archive.
 
 ---
 

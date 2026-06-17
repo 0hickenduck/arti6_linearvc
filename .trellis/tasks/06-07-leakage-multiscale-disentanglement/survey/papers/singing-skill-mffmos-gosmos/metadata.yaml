@@ -1,0 +1,7 @@
+id: singing-skill-mffmos-gosmos
+title: MFFMOS and GOSMOS
+year: 2026
+benchmark_role: broad context
+code_gate: survey/reference by default
+sources:
+  - https://www.sciencedirect.com/science/article/pii/S0003682X25004323

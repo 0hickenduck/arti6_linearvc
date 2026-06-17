@@ -130,7 +130,7 @@ Context:
 - Active task: ${TASK_CONTEXT}
 - You may inspect repository files from this working directory.
 - Follow AGENTS.md if present.
-- Respect the caller's prompt as the task scope.
+- Respect the caller prompt as the task scope.
 - Do not perform destructive operations unless the prompt explicitly asks for them.
 - Return a concise report of what you did, what you found, and any files changed.
 

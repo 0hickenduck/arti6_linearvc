@@ -1,0 +1,9 @@
+id: singing-skill-svqtd
+title: SVQTD and Paralinguistic Singing Attribute Recognition
+year: 2022
+benchmark_role: possible pivot/baseline
+code_gate: request-based data; model code unavailable by default
+sources:
+  - https://yanzexu.xyz/SVQTD/
+  - https://catalogue.yorvoice.york.ac.uk/catalogue/CI3KX3KM
+  - https://link.springer.com/article/10.1186/s13636-022-00240-z

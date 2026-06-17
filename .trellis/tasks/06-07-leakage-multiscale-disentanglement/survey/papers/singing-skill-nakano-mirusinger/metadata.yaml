@@ -1,0 +1,9 @@
+id: singing-skill-nakano-mirusinger
+title: Nakano Singing Skill Evaluation and MiruSinger
+year: 2006-2007
+benchmark_role: related-work evidence
+code_gate: survey/reference by default
+sources:
+  - https://www.isca-archive.org/interspeech_2006/nakano06_interspeech.pdf
+  - https://staff.aist.go.jp/t.nakano/PAPER/ISM2007nakano.pdf
+  - https://staff.aist.go.jp/t.nakano/SingingSkill/index-j.html

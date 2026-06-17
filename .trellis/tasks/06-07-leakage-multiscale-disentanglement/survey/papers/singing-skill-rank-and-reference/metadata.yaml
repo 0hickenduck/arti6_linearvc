@@ -1,0 +1,9 @@
+id: singing-skill-rank-and-reference
+title: Learn by Referencing, Twin Networks, and Automatic Singing Skill Leaderboards
+year: 2020-2021
+benchmark_role: related-work evidence
+code_gate: survey/reference by default
+sources:
+  - https://archives.ismir.net/ismir2021/paper/000103.pdf
+  - https://archives.ismir.net/ismir2020/paper/000165.pdf
+  - https://signalprocessingsociety.org/publications-resources/ieee-transactions-audio-speech-and-language-processing/2020/02/automatic

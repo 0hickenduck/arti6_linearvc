@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 18
-- **Last Active**: 2026-05-31
+- **Total Sessions**: 21
+- **Last Active**: 2026-06-16
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~605 | Active |
+| `journal-1.md` | ~735 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,9 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 21 | 2026-06-16 | Literature Review: Phonological Analogies & Voice Conversion | - | `codex/research-system-architecture` |
+| 20 | 2026-06-07 | Research survey and singing-skill direction | `b49e79b` | `codex/research-system-architecture` |
+| 19 | 2026-06-01 | Research system architecture harness design | - | `master` |
 | 18 | 2026-05-31 | Literature Survey for Domain and Skill Shifters | - | `master` |
 | 17 | 2026-05-25 | Upgrade Timbre Pivoting to Multi-Dimensional Reference Comparison | `7286ecd` | `master` |
 | 16 | 2026-05-25 | Refine VTuber Dataset Curation and Implement Dynamic Demo System | `469a065`, `adc71df`, `0993ea3` | `master` |

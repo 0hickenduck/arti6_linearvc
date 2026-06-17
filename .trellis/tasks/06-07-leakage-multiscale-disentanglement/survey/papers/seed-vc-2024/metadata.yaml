@@ -1,0 +1,8 @@
+title: "Zero-shot Voice Conversion with Diffusion Transformers"
+year: 2024
+venue: "arXiv"
+paper_url: "https://arxiv.org/abs/2411.09943"
+code_url: "https://github.com/Plachtaa/seed-vc"
+benchmark_role: "downstream intervention target and baseline"
+code_status: "usable open-source code/checkpoints; already integrated locally by repository scripts"
+

@@ -63,6 +63,7 @@ From Step 1 you know the current task. Check the task directory:
 | User intent | Skill |
 |---|---|
 | New feature / unclear requirements | `trellis-brainstorm` |
+| Literature survey / paper extraction / benchmark candidate survey | `trellis-research-survey` |
 | About to write code | `trellis-before-dev` |
 | Done coding / quality check | `trellis-check` |
 | Stuck / fixed same bug multiple times | `trellis-break-loop` |

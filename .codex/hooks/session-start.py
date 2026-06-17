@@ -465,14 +465,19 @@ If a task is READY, execute its Next required action without asking whether to c
 </ready>""")
 
     context = output.getvalue()
-    result = {
-        "suppressOutput": True,
-        "systemMessage": f"Trellis context injected ({len(context)} chars)",
-        "hookSpecificOutput": {
-            "hookEventName": "SessionStart",
-            "additionalContext": context,
-        },
-    }
+    if "--antigravity" in sys.argv:
+        result = {
+            "systemMessage": context,
+        }
+    else:
+        result = {
+            "suppressOutput": True,
+            "systemMessage": f"Trellis context injected ({len(context)} chars)",
+            "hookSpecificOutput": {
+                "hookEventName": "SessionStart",
+                "additionalContext": context,
+            },
+        }
 
     print(json.dumps(result, ensure_ascii=False), flush=True)
 

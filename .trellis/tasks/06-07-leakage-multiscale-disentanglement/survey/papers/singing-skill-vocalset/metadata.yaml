@@ -1,0 +1,8 @@
+id: singing-skill-vocalset
+title: VocalSet
+year: 2018-2023
+benchmark_role: possible pivot/baseline
+code_gate: data usable; baseline implementation simple
+sources:
+  - https://archives.ismir.net/ismir2018/paper/000114.pdf
+  - https://zenodo.org/records/10200775

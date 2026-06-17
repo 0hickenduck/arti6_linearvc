@@ -1,0 +1,9 @@
+title: "GTSinger: A Global Multi-Technique Singing Corpus with Realistic Music Scores for All Singing Tasks"
+year: 2024
+venue: "NeurIPS 2024 Datasets and Benchmarks Spotlight"
+paper_url: "https://arxiv.org/abs/2409.13832"
+proceedings_url: "https://papers.nips.cc/paper_files/paper/2024/hash/023d2c1a17cf35b11a0cbb43a0677c91-Abstract-Datasets_and_Benchmarks_Track.html"
+code_url: "https://github.com/AaronZ345/GTSinger"
+benchmark_role: "primary dataset"
+code_status: "dataset and processing code available"
+

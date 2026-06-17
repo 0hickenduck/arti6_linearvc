@@ -1,0 +1,9 @@
+id: singing-skill-gtsinger
+title: GTSinger
+year: 2024
+benchmark_role: experiment-critical reference
+code_gate: usable baseline candidate
+sources:
+  - https://arxiv.org/abs/2409.13832
+  - https://github.com/AaronZ345/GTSinger
+  - https://huggingface.co/datasets/AaronZ345/GTSinger

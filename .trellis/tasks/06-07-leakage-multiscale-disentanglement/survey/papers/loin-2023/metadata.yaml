@@ -1,0 +1,8 @@
+title: "Robust Feature Decoupling in Voice Conversion by Using Locality-Based Instance Normalization"
+year: 2023
+venue: "Interspeech 2023"
+paper_url: "https://www.isca-archive.org/interspeech_2023/gu23b_interspeech.html"
+code_url: null
+benchmark_role: "related-work evidence"
+code_status: "survey/reference only; no maintained official implementation identified"
+
